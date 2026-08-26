@@ -66,6 +66,21 @@ const routes = [
     component: FormView,
   },
   {
+    path: '/weather',
+    name: 'weather-home',
+    component: () => import('@/views/WeatherHomeView.vue'),
+  },
+  {
+    path: '/weather/about',
+    name: 'weather-about',
+    component: () => import('@/views/WeatherAboutView.vue'),
+  },
+  {
+    path: '/weather/:cityId',
+    name: 'weather-detail',
+    component: () => import('@/views/WeatherDetailView.vue'),
+  },
+  {
     path: '/hands-on/weather',
     name: 'hands-on-weather',
     component: HandsOnView,

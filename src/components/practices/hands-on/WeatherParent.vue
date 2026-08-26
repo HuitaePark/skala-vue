@@ -4,6 +4,15 @@ import BaseDashboardCard from './BaseDashboardCard.vue'
 import SearchBar from './SearchBar.vue'
 import WeatherCard from './WeatherCard.vue'
 
+const props = defineProps({
+  detailMode: {
+    type: String,
+    default: 'modal',
+  },
+})
+
+const emit = defineEmits(['click-detail'])
+
 const weatherList = ref([
   {
     id: 'city_01',
@@ -297,6 +306,12 @@ function selectCity(city) {
 
 function showDetail(city) {
   selectCity(city)
+
+  if (props.detailMode === 'route') {
+    emit('click-detail', city)
+    return
+  }
+
   detailCityId.value = city.id
 }
 

@@ -99,6 +99,7 @@ const componentMap = [
     </section>
 
     <RouterLink class="next-link secondary-link" to="/hands-on/weather">서비스형 Weather Dashboard로 이동 →</RouterLink>
+    <RouterLink class="next-link secondary-link" to="/weather">Weather Router Hands on으로 이동 →</RouterLink>
     <RouterLink class="next-link secondary-link" to="/components/props">Props &amp; Emits로 이동 →</RouterLink>
   </div>
 </template>

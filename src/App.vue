@@ -5,7 +5,7 @@ const route = useRoute()
 </script>
 
 <template>
-  <div :class="['app-shell', { 'app-shell--weather': route.name === 'hands-on-weather' }]">
+  <div :class="['app-shell', { 'app-shell--weather': route.name === 'hands-on-weather', 'app-shell--weather-router': ['weather-home', 'weather-detail', 'weather-about'].includes(route.name) }]">
     <header class="site-header">
       <RouterLink class="brand" to="/">
         <span class="brand-mark" aria-hidden="true">V</span>
@@ -26,12 +26,13 @@ const route = useRoute()
         <RouterLink to="/events">Event Handling</RouterLink>
         <RouterLink to="/forms">Form &amp; Style</RouterLink>
         <RouterLink to="/hands-on/weather">Weather</RouterLink>
+        <RouterLink to="/weather">Weather Router</RouterLink>
         <RouterLink to="/directives">Vue Directive</RouterLink>
         <RouterLink to="/about">About</RouterLink>
       </nav>
     </header>
 
-    <main :class="['app-main', { 'app-main--weather': route.name === 'hands-on-weather' }]">
+    <main :class="['app-main', { 'app-main--weather': route.name === 'hands-on-weather', 'app-main--weather-router': ['weather-home', 'weather-detail', 'weather-about'].includes(route.name) }]">
       <RouterView />
     </main>
 

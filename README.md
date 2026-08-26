@@ -1,6 +1,6 @@
 # SKALA-VUE
 
-Vue 3 + Vite로 구성한 강의 PDF(1~178페이지) 실습 프로젝트입니다.
+Vue 3 + Vite로 구성한 강의 PDF(1~197페이지) 실습 프로젝트입니다.
 
 ## 실행
 
@@ -20,6 +20,9 @@ npm run dev
 - `/composition/lifecycle`: PDF 152~155페이지 Component Lifecycle·Lifecycle Hook Code Challenge
 - `/components/props`: PDF 156~172페이지 Props·Emits와 Code Challenge
 - `/components/weather`: PDF 178쪽 Hands on Weather Component Code Challenge
+- `/weather`: PDF 196~197쪽 Weather Router 메인 대시보드
+- `/weather/:cityId`: 도시 코드 기반 동적 상세 페이지
+- `/weather/about`: Weather Router 서비스 소개
 - `/events`: PDF 93~105페이지 Vue Event Handling 실습
 - `/forms`: PDF 106~115페이지 Vue Form Handling·Style 실습
 - `/hands-on/weather`: PDF 116쪽 서비스형 Weather Dashboard

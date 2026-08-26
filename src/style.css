@@ -158,7 +158,22 @@ code {
   display: none;
 }
 
+.app-shell--weather-router .site-header,
+.app-shell--weather-router .site-footer {
+  display: none;
+}
+
 .app-main.app-main--weather {
+  width: 100%;
+  max-width: none;
+  min-height: 0;
+  padding: 0;
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+}
+
+.app-main.app-main--weather-router {
   width: 100%;
   max-width: none;
   min-height: 0;
