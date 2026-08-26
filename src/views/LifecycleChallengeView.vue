@@ -16,5 +16,6 @@ import LifecyclePractice from '@/components/practices/composition/LifecyclePract
     <LifecyclePractice />
 
     <RouterLink class="next-link secondary-link" to="/composition/challenge">Computed &amp; Watchers로 이동 →</RouterLink>
+    <RouterLink class="next-link secondary-link" to="/components/props">Props &amp; Emits로 이동 →</RouterLink>
   </div>
 </template>
