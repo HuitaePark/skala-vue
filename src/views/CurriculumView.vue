@@ -1,0 +1,130 @@
+<script setup>
+const sections = [
+  {
+    pages: '1~6쪽',
+    title: '과정 소개와 과제 기준',
+    description: 'SKALA Frontend-framework: Vue.js 과정의 학습 목표, 소스 저장소, 제출 방법과 평가 기준을 확인합니다.',
+    tag: 'Orientation',
+  },
+  {
+    pages: '26~37쪽',
+    title: 'Vue.js 개념',
+    description: 'Vue의 역사, MVVM, Virtual DOM, 양방향 바인딩, 컴포넌트, SPA와 Router·Pinia·Axios·Vite의 역할을 정리합니다.',
+    tag: 'Concepts',
+  },
+  {
+    pages: '38~47쪽',
+    title: '개발환경 구성',
+    description: 'WSL/Ubuntu, Node.js, VS Code, Vue Devtools, Postman을 준비하는 강의 구간입니다.',
+    tag: 'Environment',
+  },
+  {
+    pages: '48~65쪽',
+    title: 'Vue 프로젝트 스캐폴딩',
+    description: 'Vite로 프로젝트를 만들고 SFC, 디렉터리 구조, main.js, App.vue, Router와 Pinia를 연결합니다.',
+    tag: '완료',
+    to: '/',
+  },
+  {
+    pages: '66~71쪽',
+    title: 'Composition API와 보간법',
+    description: 'Options API와 Composition API를 비교하고 ref 반응성, JavaScript 텍스트 보간, SampleOne·SampleTwo를 실행합니다.',
+    tag: '완료',
+    to: '/',
+  },
+  {
+    pages: '72~92쪽',
+    title: 'Code Challenge · Vue Directive',
+    description: 'v-html, v-text, v-bind, v-if, v-show, v-for, v-pre, v-cloak, v-once, v-memo 예제를 한 화면에서 비교합니다.',
+    tag: '완료',
+    to: '/directives',
+  },
+  {
+    pages: '93~105쪽',
+    title: 'Code Challenge · Vue Event Handling',
+    description: 'v-on 축약형, inline/method handler, Event Object와 $event, prevent·stop·once·self와 키·마우스 수식어를 실습합니다.',
+    tag: '완료',
+    to: '/events',
+  },
+  {
+    pages: '106~115쪽',
+    title: 'Code Challenge · Vue Form Handling',
+    description: 'v-model 양방향 바인딩, textarea·checkbox·radio·select 매핑, .lazy·.number·.trim 수식어와 Scoped/External Style을 실습합니다.',
+    tag: '완료',
+    to: '/forms',
+  },
+  {
+    pages: '116쪽',
+    title: 'Hands-on · Weather Dashboard',
+    description: '검색·즐겨찾기·시간대별 예보·도시 상세 패널을 갖춘 서비스형 날씨 Dashboard로 v-for, v-if, :value, @input 흐름을 확인합니다.',
+    tag: '실습 화면',
+    to: '/hands-on/weather',
+  },
+  {
+    pages: '117~126쪽',
+    title: 'Composition API · Reactive State',
+    description: 'createApp 개념, ref·reactive 반응성 상태와 배열·객체 변경 예제를 실행하고 Reactive State Code Challenge까지 확인합니다.',
+    tag: '완료',
+    to: '/composition',
+  },
+  {
+    pages: '127~143쪽',
+    title: 'Computed & Watchers',
+    description: 'computed 캐싱, 단일·다중 source watch, deep·reactive·array watch와 watchEffect의 자동 의존성 추적을 실습합니다.',
+    tag: '완료',
+    to: '/composition',
+  },
+  {
+    pages: '144쪽',
+    title: 'Code Challenge · Computed & Watchers',
+    description: 'computed, watch, Multi-Source Watch, Deep Watch, Array Watch, watchEffect 예제를 한 화면에서 점검합니다.',
+    tag: '실습 화면',
+    to: '/composition',
+  },
+]
+</script>
+
+<template>
+  <div class="page-shell">
+    <section class="page-intro">
+      <p class="eyebrow">PDF 1~144 · SKALA-VUE Roadmap</p>
+      <h1>강의 PDF 전체 범위</h1>
+      <p>
+        1~144페이지를 학습 흐름대로 나눈 커리큘럼입니다. 이론·환경 설명은 범위를 카드로
+        정리하고, 실제 소스코드가 있는 구간은 실행 가능한 실습 화면으로 연결했습니다.
+      </p>
+    </section>
+
+    <section class="practice-section curriculum-section">
+      <div class="curriculum-head">
+        <div>
+          <p class="section-kicker">전체 학습 경로</p>
+          <h2>Vue Syntax 학습 경로</h2>
+        </div>
+        <span class="page-badge">1 — 144</span>
+      </div>
+
+      <div class="curriculum-list">
+        <article v-for="section in sections" :key="section.pages" class="curriculum-card">
+          <div class="curriculum-card-topline">
+            <span class="page-badge light">{{ section.pages }}</span>
+            <span class="curriculum-tag" :class="{ complete: section.tag === '완료' }">{{ section.tag }}</span>
+          </div>
+          <h3>{{ section.title }}</h3>
+          <p>{{ section.description }}</p>
+          <RouterLink v-if="section.to" class="card-link" :to="section.to">
+            {{ section.to === '/composition/challenge' ? 'Code Challenge 실습 열기' : section.to === '/composition' ? 'Composition API 실습 열기' : section.to === '/directives' ? 'Directive 실습 열기' : section.to === '/events' ? 'Event 실습 열기' : section.to === '/forms' ? 'Form 실습 열기' : section.to === '/hands-on/weather' ? 'Weather Dashboard 열기' : 'Vue 기초 실습 열기' }}
+            <span aria-hidden="true">→</span>
+          </RouterLink>
+        </article>
+      </div>
+    </section>
+
+    <section class="practice-section curriculum-note">
+      <p class="section-kicker">실행 안내</p>
+      <h2>프로젝트 실행</h2>
+      <p>터미널에서 <code>npm install</code> 후 <code>npm run dev</code>를 실행하고, 안내된 로컬 주소로 접속하세요.</p>
+      <div class="command-line"><code>npm run dev</code><span>→ http://localhost:5173</span></div>
+    </section>
+  </div>
+</template>
