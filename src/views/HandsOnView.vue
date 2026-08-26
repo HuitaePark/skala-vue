@@ -1,5 +1,5 @@
 <script setup>
-import WeatherDashboard from '@/components/practices/hands-on/WeatherMockupPractice.vue'
+import WeatherDashboard from '@/components/practices/hands-on/WeatherParent.vue'
 </script>
 
 <template>

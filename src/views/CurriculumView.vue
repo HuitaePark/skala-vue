@@ -128,16 +128,23 @@ const sections = [
     tag: '실습 화면',
     to: '/components/props',
   },
+  {
+    pages: '178쪽',
+    title: 'Hands on · Weather Component',
+    description: '기능 변경 없이 WeatherParent, BaseDashboardCard, SearchBar, WeatherCard 네 컴포넌트로 날씨 화면을 분리하고 Props·Emits·Slot 흐름을 확인합니다.',
+    tag: '실습 화면',
+    to: '/components/weather',
+  },
 ]
 </script>
 
 <template>
   <div class="page-shell">
     <section class="page-intro">
-      <p class="eyebrow">PDF 1~172 · SKALA-VUE Roadmap</p>
+      <p class="eyebrow">PDF 1~178 · SKALA-VUE Roadmap</p>
       <h1>강의 PDF 전체 범위</h1>
       <p>
-        1~172페이지를 학습 흐름대로 나눈 커리큘럼입니다. 이론·환경 설명은 범위를 카드로
+        1~178페이지를 학습 흐름대로 나눈 커리큘럼입니다. 이론·환경 설명은 범위를 카드로
         정리하고, 실제 소스코드가 있는 구간은 실행 가능한 실습 화면으로 연결했습니다.
       </p>
     </section>
@@ -148,7 +155,7 @@ const sections = [
           <p class="section-kicker">전체 학습 경로</p>
           <h2>Vue Syntax 학습 경로</h2>
         </div>
-        <span class="page-badge">1 — 172</span>
+        <span class="page-badge">1 — 178</span>
       </div>
 
       <div class="curriculum-list">
@@ -160,7 +167,7 @@ const sections = [
           <h3>{{ section.title }}</h3>
           <p>{{ section.description }}</p>
           <RouterLink v-if="section.to" class="card-link" :to="section.to">
-            {{ section.to === '/composition/challenge' ? 'Code Challenge 실습 열기' : section.to === '/composition/lifecycle' ? 'Lifecycle 실습 열기' : section.to === '/components/props' ? 'Props & Emits 실습 열기' : section.to === '/composition' ? 'Composition API 실습 열기' : section.to === '/directives' ? 'Directive 실습 열기' : section.to === '/events' ? 'Event 실습 열기' : section.to === '/forms' ? 'Form 실습 열기' : section.to === '/hands-on/weather' ? 'Weather Dashboard 열기' : 'Vue 기초 실습 열기' }}
+            {{ section.to === '/composition/challenge' ? 'Code Challenge 실습 열기' : section.to === '/composition/lifecycle' ? 'Lifecycle 실습 열기' : section.to === '/components/props' ? 'Props & Emits 실습 열기' : section.to === '/components/weather' ? 'Weather Component 실습 열기' : section.to === '/composition' ? 'Composition API 실습 열기' : section.to === '/directives' ? 'Directive 실습 열기' : section.to === '/events' ? 'Event 실습 열기' : section.to === '/forms' ? 'Form 실습 열기' : section.to === '/hands-on/weather' ? 'Weather Dashboard 열기' : 'Vue 기초 실습 열기' }}
             <span aria-hidden="true">→</span>
           </RouterLink>
         </article>

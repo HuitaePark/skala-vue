@@ -1,5 +1,8 @@
 <script setup>
 import { computed, ref } from 'vue'
+import BaseDashboardCard from './BaseDashboardCard.vue'
+import SearchBar from './SearchBar.vue'
+import WeatherCard from './WeatherCard.vue'
 
 const weatherList = ref([
   {
@@ -301,18 +304,18 @@ function closeDetails() {
   detailCityId.value = null
 }
 
-function clearSearch() {
-  cityQuery.value = ''
-}
-
-function handleSearchInput(event) {
-  cityQuery.value = event.target.value
-  const query = cityQuery.value.trim().toLowerCase()
-  const firstMatch = weatherList.value.find((city) => `${city.name} ${city.region}`.toLowerCase().includes(query))
+function handleQueryUpdate(query) {
+  cityQuery.value = query
+  const normalizedQuery = query.trim().toLowerCase()
+  const firstMatch = weatherList.value.find((city) => `${city.name} ${city.region}`.toLowerCase().includes(normalizedQuery))
 
   if (firstMatch) {
     selectCity(firstMatch)
   }
+}
+
+function clearSearch() {
+  cityQuery.value = ''
 }
 
 function isFavorite(cityId) {
@@ -349,18 +352,7 @@ function refreshWeather() {
     </div>
 
     <div class="weather-dashboard-toolbar">
-      <label class="weather-dashboard-search" for="weather-city-search">
-        <span aria-hidden="true">⌕</span>
-        <span class="sr-only">도시 검색</span>
-        <input
-          id="weather-city-search"
-          type="text"
-          :value="cityQuery"
-          placeholder="Search a city or region"
-          @input="handleSearchInput"
-        />
-        <button v-if="cityQuery" type="button" aria-label="검색어 지우기" @click="clearSearch">×</button>
-      </label>
+      <SearchBar :query="cityQuery" @update-query="handleQueryUpdate" @clear-query="clearSearch" />
       <div class="weather-dashboard-toolbar-meta">
         <span><i class="weather-live-dot" aria-hidden="true"></i> Updated {{ lastUpdated }}</span>
         <button type="button" class="weather-refresh-button" :class="{ refreshing: isRefreshing }" @click="refreshWeather">
@@ -383,82 +375,33 @@ function refreshWeather() {
     </div>
 
     <div class="weather-dashboard-grid">
-      <article class="weather-current-card">
-        <div class="weather-current-topline">
-          <div>
-            <p class="weather-card-label">CURRENT CONDITIONS</p>
-            <h3>{{ selectedCity.name }}</h3>
-            <p class="weather-current-region">{{ selectedCity.region }} · {{ selectedCity.status }}</p>
-          </div>
-          <button
-            type="button"
-            class="weather-favorite-button"
-            :class="{ active: isFavorite(selectedCity.id) }"
-            :aria-pressed="isFavorite(selectedCity.id)"
-            :aria-label="isFavorite(selectedCity.id) ? '즐겨찾기에서 제거' : '즐겨찾기에 추가'"
-            @click="toggleFavorite(selectedCity)"
-          >
-            {{ isFavorite(selectedCity.id) ? '★' : '☆' }}
-          </button>
-        </div>
+      <WeatherCard
+        variant="current"
+        :city="selectedCity"
+        :favorite="isFavorite(selectedCity.id)"
+        @toggle-favorite="toggleFavorite"
+      />
 
-        <div class="weather-current-reading">
-          <span class="weather-current-icon" aria-hidden="true">{{ selectedCity.icon }}</span>
-          <div>
-            <strong>{{ selectedCity.temp }}<sup>°</sup></strong>
-            <span v-if="selectedCity.temp >= 25" class="weather-condition-pill warm">Warm &amp; bright</span>
-            <span v-else class="weather-condition-pill cool">Cool &amp; calm</span>
-          </div>
-        </div>
-
-        <p class="weather-current-description">{{ selectedCity.description }}</p>
-        <div class="weather-high-low"><span>Feels like <strong>{{ selectedCity.feelsLike }}°</strong></span><span>H <strong>{{ selectedCity.high }}°</strong></span><span>L <strong>{{ selectedCity.low }}°</strong></span><span>Rain <strong>{{ selectedCity.precipitation }}</strong></span></div>
-
-        <div class="weather-hourly-heading"><span>Next 6 hours</span><small>Local time</small></div>
-        <div class="weather-hourly-list">
-          <div v-for="hour in selectedCity.forecast" :key="`${selectedCity.id}-${hour.day}`" class="weather-hourly-item">
-            <span>{{ hour.day }}</span>
-            <span class="weather-hourly-icon" aria-hidden="true">{{ hour.icon }}</span>
-            <strong>{{ hour.temp }}°</strong>
-            <small>{{ hour.rain }}% rain</small>
-          </div>
-        </div>
-      </article>
-
-      <aside class="weather-locations-card">
-        <div class="weather-panel-heading">
-          <div><p class="weather-card-label">SAVED LOCATIONS</p><h3>My places</h3></div>
-          <span>{{ filteredWeather.length }}/{{ weatherList.length }}</span>
-        </div>
+      <BaseDashboardCard class="weather-locations-card" eyebrow="SAVED LOCATIONS" title="My places">
+        <template #meta>{{ filteredWeather.length }}/{{ weatherList.length }}</template>
 
         <div v-if="filteredWeather.length" class="weather-location-list">
-          <article
+          <WeatherCard
             v-for="city in filteredWeather"
             :key="city.id"
-            class="weather-location-row"
-            :class="{ selected: city.id === selectedCity.id }"
-            tabindex="0"
-            @click="selectCity(city)"
-            @keydown.enter="selectCity(city)"
-            @keydown.space.prevent="selectCity(city)"
-          >
-            <span class="weather-location-icon" aria-hidden="true">{{ city.icon }}</span>
-            <div class="weather-location-name"><strong>{{ city.name }}</strong><span>{{ city.status }} · {{ city.low }}° / {{ city.high }}°</span></div>
-            <strong class="weather-location-temp">{{ city.temp }}°</strong>
-            <button
-              type="button"
-              class="weather-location-favorite"
-              :class="{ active: isFavorite(city.id) }"
-              :aria-label="isFavorite(city.id) ? `${city.name} 즐겨찾기 해제` : `${city.name} 즐겨찾기 추가`"
-              @click.stop="toggleFavorite(city)"
-            >{{ isFavorite(city.id) ? '★' : '☆' }}</button>
-            <button type="button" class="weather-location-action" @click.stop="showDetail(city)">View</button>
-          </article>
+            variant="location"
+            :city="city"
+            :selected="city.id === selectedCity.id"
+            :favorite="isFavorite(city.id)"
+            @select-card="selectCity"
+            @click-detail="showDetail"
+            @toggle-favorite="toggleFavorite"
+          />
         </div>
         <p v-else class="weather-location-empty">No places match “{{ cityQuery }}”. Try another search.</p>
 
         <div class="weather-location-footer"><span class="weather-location-footer-dot"></span> Local mock data · No API key required</div>
-      </aside>
+      </BaseDashboardCard>
     </div>
 
     <div class="weather-stat-grid">
@@ -469,17 +412,18 @@ function refreshWeather() {
     </div>
 
     <div class="weather-bottom-grid">
-      <section class="weather-planner-card">
-        <div class="weather-panel-heading"><div><p class="weather-card-label">DAY PLANNER</p><h3>Make the most of today</h3></div><span aria-hidden="true">✦</span></div>
+      <BaseDashboardCard class="weather-planner-card" eyebrow="DAY PLANNER" title="Make the most of today">
+        <template #meta><span aria-hidden="true">✦</span></template>
         <p>{{ selectedCity.name }} is looking {{ selectedCity.temp >= 25 ? 'warm and bright' : 'cool and comfortable' }}. {{ selectedCity.description }}</p>
         <div class="weather-planner-tags"><span>☕ Morning walk</span><span>◷ Best window {{ selectedCity.bestWindow }}</span><span>Rain {{ selectedCity.precipitation }}</span><span>UV {{ selectedCity.uvIndex }}</span></div>
         <p class="weather-daylight">Sunrise {{ selectedCity.sunrise }} · Sunset {{ selectedCity.sunset }}</p>
-      </section>
-      <section class="weather-snapshot-card">
-        <div class="weather-panel-heading"><div><p class="weather-card-label">TODAY’S SNAPSHOT</p><h3>At a glance</h3></div><span class="weather-snapshot-score">{{ selectedCity.comfortScore }}<small>/10</small></span></div>
+      </BaseDashboardCard>
+
+      <BaseDashboardCard class="weather-snapshot-card" eyebrow="TODAY’S SNAPSHOT" title="At a glance">
+        <template #meta><span class="weather-snapshot-score">{{ selectedCity.comfortScore }}<small>/10</small></span></template>
         <div class="weather-snapshot-bar"><span :style="{ width: `${Number(selectedCity.comfortScore) * 10}%` }"></span></div>
         <div class="weather-snapshot-footer"><span>Comfort index</span><strong>{{ selectedCity.comfortLabel }}</strong></div>
-      </section>
+      </BaseDashboardCard>
     </div>
 
     <div v-if="detailCity" class="weather-modal-layer" role="presentation" @click.self="closeDetails">
@@ -495,3 +439,503 @@ function refreshWeather() {
     </div>
   </section>
 </template>
+
+<style scoped>
+.weather-dashboard {
+  --weather-ink: #202438;
+  --weather-muted: #7a8297;
+  --weather-line: #e8eaf2;
+  --weather-accent: #6268ef;
+  --weather-accent-dark: #4d53d4;
+  position: relative;
+  padding: 30px;
+  overflow: hidden;
+  border: 1px solid #e6e8f0;
+  border-radius: 24px;
+  color: var(--weather-ink);
+  background: #f8f9fc;
+  box-shadow: 0 20px 45px rgba(36, 42, 73, 0.08);
+}
+
+:global(.weather-page) > .weather-dashboard {
+  width: 100%;
+  min-height: 100%;
+  border-right: 0;
+  border-left: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.weather-dashboard::before {
+  position: absolute;
+  top: -160px;
+  right: -120px;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  background: rgba(113, 118, 239, 0.09);
+  content: '';
+  pointer-events: none;
+}
+
+.weather-dashboard-head,
+.weather-dashboard-toolbar,
+.weather-city-chips,
+.weather-dashboard-grid,
+.weather-stat-grid,
+.weather-bottom-grid {
+  position: relative;
+  z-index: 1;
+}
+
+.weather-dashboard-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.weather-dashboard-kicker,
+.weather-card-label {
+  margin: 0 0 8px;
+  color: #7b83a0;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+}
+
+.weather-dashboard-head h2 {
+  margin: 0;
+  color: var(--weather-ink);
+  font-size: clamp(26px, 4vw, 38px);
+  letter-spacing: -0.045em;
+}
+
+.weather-dashboard-subtitle {
+  margin: 8px 0 0;
+  color: var(--weather-muted);
+  font-size: 13px;
+}
+
+.weather-account-chip {
+  padding: 7px 10px 7px 7px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid var(--weather-line);
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 5px 14px rgba(46, 52, 86, 0.05);
+}
+
+.weather-account-avatar {
+  width: 31px;
+  height: 31px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  background: #7379ea;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.weather-account-chip > span:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.weather-account-chip strong {
+  color: var(--weather-ink);
+  font-size: 12px;
+}
+
+.weather-account-chip small {
+  color: var(--weather-muted);
+  font-size: 10px;
+}
+
+.weather-dashboard-toolbar {
+  margin-top: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.weather-dashboard-toolbar-meta {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  color: var(--weather-muted);
+  font-size: 11px;
+}
+
+.weather-live-dot {
+  width: 7px;
+  height: 7px;
+  margin-right: 4px;
+  display: inline-block;
+  border-radius: 50%;
+  background: #56bf8a;
+  box-shadow: 0 0 0 3px rgba(86, 191, 138, 0.15);
+}
+
+.weather-refresh-button {
+  min-height: 32px;
+  padding: 6px 10px;
+  border: 1px solid var(--weather-line);
+  border-radius: 8px;
+  color: #5d6681;
+  background: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.weather-refresh-button:hover {
+  border-color: #b9bcf3;
+  color: var(--weather-accent-dark);
+  transform: translateY(-1px);
+}
+
+.weather-refresh-button span {
+  margin-right: 4px;
+  display: inline-block;
+  font-size: 15px;
+}
+
+.weather-refresh-button.refreshing span {
+  animation: weather-spin 500ms linear infinite;
+}
+
+@keyframes weather-spin {
+  to { transform: rotate(360deg); }
+}
+
+.weather-city-chips {
+  margin-top: 20px;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.weather-city-chips::-webkit-scrollbar {
+  display: none;
+}
+
+.weather-city-chip {
+  min-height: 31px;
+  padding: 5px 11px;
+  flex: 0 0 auto;
+  border: 1px solid var(--weather-line);
+  border-radius: 999px;
+  color: #737a90;
+  background: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: color 160ms ease, border-color 160ms ease, background-color 160ms ease;
+}
+
+.weather-city-chip span {
+  margin-right: 5px;
+}
+
+.weather-city-chip:hover,
+.weather-city-chip.active {
+  border-color: #b9bcf3;
+  color: #4f56d2;
+  background: #eeefff;
+}
+
+.weather-dashboard-grid {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.32fr) minmax(300px, 0.88fr);
+  gap: 16px;
+}
+
+.weather-stat-grid {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.weather-stat-card {
+  min-width: 0;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--weather-line);
+  border-radius: 13px;
+  background: #fff;
+}
+
+.weather-stat-icon {
+  width: 31px;
+  height: 31px;
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 9px;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.weather-stat-icon.tone-mint { color: #42a579; background: #e6f8ef; }
+.weather-stat-icon.tone-blue { color: #4e83d2; background: #eaf2ff; }
+.weather-stat-icon.tone-lavender { color: #7862cb; background: #f0ecff; }
+.weather-stat-icon.tone-sand { color: #bd8a48; background: #fff4df; }
+.weather-stat-icon.tone-sky { color: #3f8eb5; background: #e8f6fb; }
+.weather-stat-icon.tone-rose { color: #c25e85; background: #fff0f5; }
+
+.weather-stat-card > div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.weather-stat-card > div span {
+  color: #9aa0b1;
+  font-size: 10px;
+}
+
+.weather-stat-card > div strong {
+  overflow: hidden;
+  color: var(--weather-ink);
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.weather-bottom-grid {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 16px;
+}
+
+.weather-planner-card,
+.weather-snapshot-card {
+  min-height: 166px;
+}
+
+.weather-planner-card > p {
+  max-width: 56ch;
+  margin: 18px 0 0;
+  color: var(--weather-muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.weather-planner-tags {
+  margin-top: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.weather-planner-tags span {
+  padding: 6px 8px;
+  border-radius: 7px;
+  color: #66708a;
+  background: #f4f5f9;
+  font-size: 10px;
+}
+
+.weather-daylight {
+  margin: 13px 0 0 !important;
+  color: #a0a6b5 !important;
+  font-size: 10px !important;
+}
+
+.weather-snapshot-score {
+  color: #6268dc !important;
+  font-size: 21px !important;
+  font-weight: 800;
+}
+
+.weather-snapshot-score small {
+  color: #a2a7b8;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.weather-snapshot-bar {
+  height: 7px;
+  margin-top: 28px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #eef0f6;
+}
+
+.weather-snapshot-bar span {
+  height: 100%;
+  display: block;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #7ccda5, #6268e5);
+}
+
+.weather-snapshot-footer {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: #9aa0b1;
+  font-size: 10px;
+}
+
+.weather-snapshot-footer strong {
+  color: #596078;
+  font-size: 11px;
+}
+
+.weather-modal-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  padding: 20px;
+  display: grid;
+  place-items: center;
+  background: rgba(24, 28, 48, 0.48);
+  backdrop-filter: blur(4px);
+}
+
+.weather-detail-modal {
+  width: min(100%, 390px);
+  position: relative;
+  padding: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 19px;
+  background: #fff;
+  box-shadow: 0 24px 80px rgba(16, 20, 44, 0.25);
+}
+
+.weather-modal-close {
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  top: 17px;
+  right: 17px;
+  border: 0;
+  border-radius: 8px;
+  color: #8b91a4;
+  background: #f1f2f7;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.weather-modal-icon {
+  display: block;
+  font-size: 42px;
+}
+
+.weather-detail-modal h3 {
+  margin: 0;
+  color: var(--weather-ink);
+  font-size: 23px;
+  letter-spacing: -0.04em;
+}
+
+.weather-modal-description {
+  margin: 10px 0 0;
+  color: var(--weather-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.weather-modal-stats {
+  margin-top: 21px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.weather-modal-stats span {
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-radius: 8px;
+  background: #f6f7fb;
+}
+
+.weather-modal-stats small {
+  color: #969caf;
+  font-size: 9px;
+}
+
+.weather-modal-stats strong {
+  color: #4d5570;
+  font-size: 12px;
+}
+
+.weather-modal-primary {
+  width: 100%;
+  min-height: 40px;
+  margin-top: 22px;
+  border: 0;
+  border-radius: 9px;
+  color: #fff;
+  background: var(--weather-accent);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.weather-modal-primary:hover {
+  background: var(--weather-accent-dark);
+}
+
+@media (max-width: 760px) {
+  .weather-dashboard {
+    padding: 20px;
+  }
+
+  .weather-dashboard-head,
+  .weather-dashboard-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .weather-account-chip {
+    align-self: flex-start;
+  }
+
+  .weather-dashboard-grid,
+  .weather-bottom-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .weather-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .weather-dashboard {
+    padding: 15px;
+  }
+
+  .weather-dashboard-head h2 {
+    font-size: 29px;
+  }
+
+  .weather-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .weather-modal-stats {
+    grid-template-columns: 1fr;
+  }
+}
+</style>

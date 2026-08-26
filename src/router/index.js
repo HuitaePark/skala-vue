@@ -12,6 +12,7 @@ import HomeView from '@/views/HomeView.vue'
 import LifecycleChallengeView from '@/views/LifecycleChallengeView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 import PropsEmitsChallengeView from '@/views/PropsEmitsChallengeView.vue'
+import WeatherComponentsChallengeView from '@/views/WeatherComponentsChallengeView.vue'
 
 const routes = [
   {
@@ -43,6 +44,11 @@ const routes = [
     path: '/components/props',
     name: 'components-props',
     component: PropsEmitsChallengeView,
+  },
+  {
+    path: '/components/weather',
+    name: 'components-weather',
+    component: WeatherComponentsChallengeView,
   },
   {
     path: '/directives',

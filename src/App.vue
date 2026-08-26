@@ -22,6 +22,7 @@ const route = useRoute()
         <RouterLink to="/composition/challenge">Code Challenge</RouterLink>
         <RouterLink to="/composition/lifecycle">Lifecycle</RouterLink>
         <RouterLink to="/components/props">Props</RouterLink>
+        <RouterLink to="/components/weather">Weather Components</RouterLink>
         <RouterLink to="/events">Event Handling</RouterLink>
         <RouterLink to="/forms">Form &amp; Style</RouterLink>
         <RouterLink to="/hands-on/weather">Weather</RouterLink>

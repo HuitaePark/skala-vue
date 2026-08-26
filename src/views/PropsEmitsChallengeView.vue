@@ -16,5 +16,6 @@ import PropsEmitsPractice from '@/components/practices/components/PropsEmitsPrac
     <PropsEmitsPractice />
 
     <RouterLink class="next-link secondary-link" to="/composition/lifecycle">Component Lifecycle로 이동 →</RouterLink>
+    <RouterLink class="next-link secondary-link" to="/components/weather">Weather Component Hands on으로 이동 →</RouterLink>
   </div>
 </template>
