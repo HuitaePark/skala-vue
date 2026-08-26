@@ -1,6 +1,6 @@
 # SKALA-VUE
 
-Vue 3 + Vite로 구성한 강의 PDF(1~144페이지) 실습 프로젝트입니다.
+Vue 3 + Vite로 구성한 강의 PDF(1~155페이지) 실습 프로젝트입니다.
 
 ## 실행
 
@@ -13,10 +13,11 @@ npm run dev
 
 ## 화면 구성
 
-- `/curriculum`: PDF 1~144페이지 전체 학습 경로
+- `/curriculum`: PDF 1~155페이지 전체 학습 경로
 - `/`: PDF 66~71페이지 반응성·텍스트 보간·Pinia 확인
 - `/composition`: PDF 117~144페이지 Composition API·Computed·Watchers 실습
 - `/composition/challenge`: PDF 127~144페이지 Code Challenge Composition API
+- `/composition/lifecycle`: PDF 152~155페이지 Component Lifecycle·Lifecycle Hook Code Challenge
 - `/events`: PDF 93~105페이지 Vue Event Handling 실습
 - `/forms`: PDF 106~115페이지 Vue Form Handling·Style 실습
 - `/hands-on/weather`: PDF 116쪽 서비스형 Weather Dashboard

@@ -9,6 +9,7 @@ import EventView from '@/views/EventView.vue'
 import FormView from '@/views/FormView.vue'
 import HandsOnView from '@/views/HandsOnView.vue'
 import HomeView from '@/views/HomeView.vue'
+import LifecycleChallengeView from '@/views/LifecycleChallengeView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 
 const routes = [
@@ -31,6 +32,11 @@ const routes = [
     path: '/composition/challenge',
     name: 'composition-challenge',
     component: CompositionChallengeView,
+  },
+  {
+    path: '/composition/lifecycle',
+    name: 'composition-lifecycle',
+    component: LifecycleChallengeView,
   },
   {
     path: '/directives',

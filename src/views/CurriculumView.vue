@@ -79,7 +79,27 @@ const sections = [
     title: 'Code Challenge · Computed & Watchers',
     description: 'computed, watch, Multi-Source Watch, Deep Watch, Array Watch, watchEffect 예제를 한 화면에서 점검합니다.',
     tag: '실습 화면',
-    to: '/composition',
+    to: '/composition/challenge',
+  },
+  {
+    pages: '146~150쪽',
+    title: 'Vue Component Overview',
+    description: '컴포넌트의 역할과 계층 구조, Parent-Child·Sibling 관계, Local/Global Registration 개념을 정리합니다.',
+    tag: '개념',
+  },
+  {
+    pages: '151~154쪽',
+    title: 'Component Lifecycle',
+    description: '생성·부착·갱신·소멸 단계와 setup, onMounted, onUpdated, onUnmounted 등 Lifecycle Hook을 확인합니다.',
+    tag: '완료',
+    to: '/composition/lifecycle',
+  },
+  {
+    pages: '155쪽',
+    title: 'Code Challenge · Component Lifecycle',
+    description: 'Lifecycle Hook 예제에서 타이머 시작, DOM 업데이트 로그, 언마운트 시 리소스 정리까지 직접 실행합니다.',
+    tag: '실습 화면',
+    to: '/composition/lifecycle',
   },
 ]
 </script>
@@ -87,10 +107,10 @@ const sections = [
 <template>
   <div class="page-shell">
     <section class="page-intro">
-      <p class="eyebrow">PDF 1~144 · SKALA-VUE Roadmap</p>
+      <p class="eyebrow">PDF 1~155 · SKALA-VUE Roadmap</p>
       <h1>강의 PDF 전체 범위</h1>
       <p>
-        1~144페이지를 학습 흐름대로 나눈 커리큘럼입니다. 이론·환경 설명은 범위를 카드로
+        1~155페이지를 학습 흐름대로 나눈 커리큘럼입니다. 이론·환경 설명은 범위를 카드로
         정리하고, 실제 소스코드가 있는 구간은 실행 가능한 실습 화면으로 연결했습니다.
       </p>
     </section>
@@ -101,7 +121,7 @@ const sections = [
           <p class="section-kicker">전체 학습 경로</p>
           <h2>Vue Syntax 학습 경로</h2>
         </div>
-        <span class="page-badge">1 — 144</span>
+        <span class="page-badge">1 — 155</span>
       </div>
 
       <div class="curriculum-list">
@@ -113,7 +133,7 @@ const sections = [
           <h3>{{ section.title }}</h3>
           <p>{{ section.description }}</p>
           <RouterLink v-if="section.to" class="card-link" :to="section.to">
-            {{ section.to === '/composition/challenge' ? 'Code Challenge 실습 열기' : section.to === '/composition' ? 'Composition API 실습 열기' : section.to === '/directives' ? 'Directive 실습 열기' : section.to === '/events' ? 'Event 실습 열기' : section.to === '/forms' ? 'Form 실습 열기' : section.to === '/hands-on/weather' ? 'Weather Dashboard 열기' : 'Vue 기초 실습 열기' }}
+            {{ section.to === '/composition/challenge' ? 'Code Challenge 실습 열기' : section.to === '/composition/lifecycle' ? 'Lifecycle 실습 열기' : section.to === '/composition' ? 'Composition API 실습 열기' : section.to === '/directives' ? 'Directive 실습 열기' : section.to === '/events' ? 'Event 실습 열기' : section.to === '/forms' ? 'Form 실습 열기' : section.to === '/hands-on/weather' ? 'Weather Dashboard 열기' : 'Vue 기초 실습 열기' }}
             <span aria-hidden="true">→</span>
           </RouterLink>
         </article>

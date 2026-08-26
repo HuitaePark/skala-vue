@@ -16,6 +16,7 @@ import CompositionApiPractice from '@/components/practices/composition/Compositi
     <CompositionApiPractice />
 
     <RouterLink class="next-link secondary-link" to="/composition/challenge">Code Challenge Composition API로 이동 →</RouterLink>
+    <RouterLink class="next-link secondary-link" to="/composition/lifecycle">Component Lifecycle로 이동 →</RouterLink>
     <RouterLink class="next-link" to="/hands-on/weather">Weather Mockup으로 이동 →</RouterLink>
   </div>
 </template>
