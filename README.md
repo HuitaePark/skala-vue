@@ -20,6 +20,7 @@ npm run dev
 - `/composition/challenge`: PDF 127~144페이지 Code Challenge Composition API
 - `/composition/lifecycle`: PDF 152~155페이지 Component Lifecycle·Lifecycle Hook Code Challenge
 - `/components/props`: PDF 156~172페이지 Props·Emits와 Code Challenge
+- `/components/slot`: PDF 173~177페이지 Default·Named·Scoped Slot Code Challenge
 - `/components/weather`: PDF 178쪽 Hands on Weather Component Code Challenge
 - `/weather`: PDF 196~197쪽 Weather Router 메인 대시보드
 - `/weather/:cityId`: 도시 코드 기반 동적 상세 페이지
@@ -27,7 +28,16 @@ npm run dev
 - `/pinia`: PDF 198~212페이지 Pinia Store·Weather Store 실습
 - `/axios`: PDF 214~230페이지 Axios Weather·JSON API 실습
 - `/ui-library`: PDF 232~249페이지 Element Plus UI Library 실습
+- `/ui-library/product`: PDF 247쪽 Element Plus 상품 수량·평점 Code Challenge
+- `/ui-library/progress`: PDF 248쪽 Element Plus 진행률·삭제 확인 Code Challenge
+- `/ui-library/overview`: PDF 232~249페이지 UI Library 개념·Weather Hands-on 전체 보기
 - `/vite`: PDF 250~274페이지 ESLint·Prettier·env·Build·Deployment 실습
+- `/vite/prettier`: PDF 271쪽 Prettier Code Challenge
+- `/vite/env`: PDF 272쪽 Vite 환경변수 Code Challenge
+- `/vite/build`: PDF 273쪽 Vite Build Code Challenge
+- `/vite/overview`: PDF 250~274페이지 Vite 품질·빌드·배포 전체 보기
+- 기본 경로 `/ui-library`와 `/vite`는 각 첫 Code Challenge를 열고, `/overview` 경로에서 전체 범위를 확인합니다.
+- UI Library 전체 보기: `/ui-library/overview` · Vite 전체 보기: `/vite/overview`
 - `/events`: PDF 93~105페이지 Vue Event Handling 실습
 - `/forms`: PDF 106~115페이지 Vue Form Handling·Style 실습
 - `/hands-on/weather`: PDF 116~274쪽 Weather Hands-on 최종 통합 대시보드
@@ -101,15 +111,11 @@ npm run build:staging
 
 ### Weather 프로젝트를 하며 알게 된 점
 
-1. **Mock 데이터와 실시간 데이터의 경계를 분리해야 합니다.** 화면 개발은 Mock으로 빠르게 시작하되, API 응답을
-   같은 화면 모델로 정규화하면 데이터 출처가 바뀌어도 컴포넌트는 거의 수정하지 않아도 됩니다.
-2. **컴포넌트의 경계가 곧 데이터 흐름의 경계가 됩니다.** Props는 부모에서 자식으로, Emits는 자식에서 부모로 흐르게
+1. **컴포넌트의 경계가 곧 데이터 흐름의 경계가 됩니다.** Props는 부모에서 자식으로, Emits는 자식에서 부모로 흐르게
    만들고, 공통 카드 레이아웃은 Slot으로 주입하니 각 컴포넌트의 책임이 선명해졌습니다.
-3. **비동기 상태는 성공만큼 실패와 경쟁 상태를 함께 다뤄야 합니다.** 로딩·오류·fallback 상태를 화면에 표시하고,
+2. **비동기 상태는 성공만큼 실패와 경쟁 상태를 함께 다뤄야 합니다.** 로딩·오류·fallback 상태를 화면에 표시하고,
    연속 검색에서 늦게 도착한 이전 응답이 최신 선택을 덮어쓰지 않도록 요청 순서를 확인합니다.
-4. **라우터와 전역 스토어를 함께 쓰면 화면 간 상태가 이어집니다.** 목록에서 고른 도시를 상세 라우트에서도 같은
+3. **라우터와 전역 스토어를 함께 쓰면 화면 간 상태가 이어집니다.** 목록에서 고른 도시를 상세 라우트에서도 같은
    스토어로 읽고 다시 조회할 수 있어 페이지가 바뀌어도 사용자 흐름이 끊기지 않습니다.
-5. **환경변수는 소스 코드와 별개로 관리해야 합니다.** Vite의 `VITE_` 변수는 빌드 시 번들에 들어가므로 `.env.local`은
+4. **환경변수는 소스 코드와 별개로 관리해야 합니다.** Vite의 `VITE_` 변수는 빌드 시 번들에 들어가므로 `.env.local`은
    커밋하지 않고, GitHub Pages에서는 Repository secret을 등록한 뒤 반드시 새로 빌드해야 합니다.
-6. **기능 피드백도 기능의 일부입니다.** API 출처(LIVE/DEMO), 마지막 갱신 시각, 로딩 버튼, 오류 메시지와 키보드로
-   닫을 수 있는 상세 패널을 함께 제공하니 실제 서비스처럼 동작을 이해하기 쉬워졌습니다.

@@ -140,6 +140,14 @@ const sections = [
     to: '/components/props',
   },
   {
+    pages: '173~177쪽',
+    title: 'Code Challenge · Component Slot',
+    description:
+      'Default Slot, Named Slot, Scoped Slot과 fallback·slot props 전달을 각각 실행하며 부모 콘텐츠 주입 흐름을 확인합니다.',
+    tag: '실습 화면',
+    to: '/components/slot',
+  },
+  {
     pages: '178쪽',
     title: 'Hands on · Weather Component',
     description:
@@ -186,27 +194,80 @@ const sections = [
     to: '/axios',
   },
   {
-    pages: '232~249쪽',
-    title: 'UI Libraries · Element Plus',
+    pages: '232~245쪽',
+    title: 'UI Libraries · Element Plus 개념',
     description:
-      '외부 UI 라이브러리의 Form, Input, Rate, Message Box, Progress 컴포넌트를 Vue 반응성 데이터와 연결합니다.',
+      '외부 UI 라이브러리의 Form, Input, Rate, Message Box, Progress 컴포넌트 역할과 Vue 반응성 연결 방식을 정리합니다.',
+    tag: '개념',
+  },
+  {
+    pages: '246쪽',
+    title: 'Code Challenge · UI Library Form',
+    description: 'Element Plus Form·Input·Switch로 이메일 형식과 약관 동의를 확인하는 회원가입 화면을 실행합니다.',
     tag: '실습 화면',
     to: '/ui-library',
   },
   {
+    pages: '247쪽',
+    title: 'Code Challenge · UI Library 상품',
+    description: 'Input Number·Rate를 사용해 상품 수량과 평점을 주문 요약에 실시간으로 반영합니다.',
+    tag: '실습 화면',
+    to: '/ui-library/product',
+  },
+  {
+    pages: '248쪽',
+    title: 'Code Challenge · UI Library 피드백',
+    description: 'Message Box 삭제 확인과 Progress 데이터 동기화 상태를 직접 조작합니다.',
+    tag: '실습 화면',
+    to: '/ui-library/progress',
+  },
+  {
+    pages: '249쪽',
+    title: 'Hands on · Weather UI Library',
+    description: 'Element Plus 카드 안에 지금까지 만든 Weather 컴포넌트를 조합해 서비스 화면으로 확장합니다.',
+    tag: '실습 화면',
+    to: '/ui-library/overview',
+  },
+  {
     pages: '250~269쪽',
-    title: 'Vite Build & Deployment',
-    description: 'ESLint·Prettier 품질 도구, Vite mode별 환경변수, bundle과 dist 정적 배포 흐름을 확인합니다.',
-    tag: '완료',
+    title: 'Vite Build & Deployment 개념',
+    description: 'ESLint·Prettier 품질 도구, Vite mode별 환경변수, bundle과 dist 정적 배포 흐름을 정리합니다.',
+    tag: '개념',
+  },
+  {
+    pages: '270쪽',
+    title: 'Code Challenge · Vite ESLint',
+    description: 'strict equality와 Vue 규칙을 lint 명령으로 검사해 제출 전 오류를 발견합니다.',
+    tag: '실습 화면',
     to: '/vite',
   },
   {
-    pages: '270~274쪽',
-    title: 'Code Challenge · Weather Deployment',
-    description:
-      '제출 전 lint·format 검사를 통과하고 API key를 저장소에서 분리한 뒤 build 결과를 정적 서버에 배포합니다.',
+    pages: '271쪽',
+    title: 'Code Challenge · Vite Prettier',
+    description: 'Vue·JavaScript·CSS 포맷을 일관되게 맞추고 format:check 결과를 확인합니다.',
     tag: '실습 화면',
-    to: '/vite',
+    to: '/vite/prettier',
+  },
+  {
+    pages: '272쪽',
+    title: 'Code Challenge · Vite 환경변수',
+    description: 'Vite mode와 VITE_ 접두사 환경변수, 로컬 API key 분리 흐름을 확인합니다.',
+    tag: '실습 화면',
+    to: '/vite/env',
+  },
+  {
+    pages: '273쪽',
+    title: 'Code Challenge · Vite Build',
+    description: 'vite build 결과인 dist 정적 자산과 해시 파일을 확인하고 배포 명령을 정리합니다.',
+    tag: '실습 화면',
+    to: '/vite/build',
+  },
+  {
+    pages: '274쪽',
+    title: 'Hands on · Weather Deployment',
+    description: '검사·빌드가 끝난 Weather SPA를 정적 호스팅에 올리는 배포 순서를 확인합니다.',
+    tag: '실습 화면',
+    to: '/vite/overview',
   },
 ]
 
@@ -216,6 +277,7 @@ const linkLabels = {
   '/composition/challenge': 'Code Challenge 실습 열기',
   '/composition/lifecycle': 'Lifecycle 실습 열기',
   '/components/props': 'Props & Emits 실습 열기',
+  '/components/slot': 'Slot 실습 열기',
   '/components/weather': 'Weather Component 실습 열기',
   '/weather': 'Weather Router 열기',
   '/hands-on/weather': 'Weather Dashboard 열기',
@@ -224,8 +286,15 @@ const linkLabels = {
   '/forms': 'Form 실습 열기',
   '/pinia': 'Pinia Store 실습 열기',
   '/axios': 'Axios API 실습 열기',
-  '/ui-library': 'UI Library 실습 열기',
-  '/vite': 'Vite 품질·배포 실습 열기',
+  '/ui-library': 'UI Library Form 실습 열기',
+  '/ui-library/product': 'UI Library 상품 실습 열기',
+  '/ui-library/progress': 'UI Library 피드백 실습 열기',
+  '/ui-library/overview': 'UI Library 전체 실습 열기',
+  '/vite': 'Vite ESLint 실습 열기',
+  '/vite/prettier': 'Vite Prettier 실습 열기',
+  '/vite/env': 'Vite 환경변수 실습 열기',
+  '/vite/build': 'Vite Build 실습 열기',
+  '/vite/overview': 'Vite 전체 실습 열기',
 }
 
 function linkLabel(section) {

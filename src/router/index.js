@@ -14,6 +14,7 @@ import LifecycleChallengeView from '@/views/LifecycleChallengeView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 import PiniaChallengeView from '@/views/PiniaChallengeView.vue'
 import PropsEmitsChallengeView from '@/views/PropsEmitsChallengeView.vue'
+import SlotChallengeView from '@/views/SlotChallengeView.vue'
 import ViteQualityView from '@/views/ViteQualityView.vue'
 import WeatherComponentsChallengeView from '@/views/WeatherComponentsChallengeView.vue'
 
@@ -54,6 +55,11 @@ const routes = [
     component: PropsEmitsChallengeView,
   },
   {
+    path: '/components/slot',
+    name: 'components-slot',
+    component: SlotChallengeView,
+  },
+  {
     path: '/components/weather',
     name: 'components-weather',
     component: WeatherComponentsChallengeView,
@@ -70,13 +76,57 @@ const routes = [
   },
   {
     path: '/ui-library',
-    name: 'ui-library-challenge',
+    name: 'ui-library-form',
     component: () => import('@/views/UiLibraryChallengeView.vue'),
+    props: { challenge: 'form' },
+  },
+  {
+    path: '/ui-library/product',
+    name: 'ui-library-product',
+    component: () => import('@/views/UiLibraryChallengeView.vue'),
+    props: { challenge: 'product' },
+  },
+  {
+    path: '/ui-library/progress',
+    name: 'ui-library-progress',
+    component: () => import('@/views/UiLibraryChallengeView.vue'),
+    props: { challenge: 'progress' },
+  },
+  {
+    path: '/ui-library/overview',
+    name: 'ui-library-overview',
+    component: () => import('@/views/UiLibraryChallengeView.vue'),
+    props: { challenge: 'all' },
   },
   {
     path: '/vite',
-    name: 'vite-quality',
+    name: 'vite-eslint',
     component: ViteQualityView,
+    props: { challenge: 'eslint' },
+  },
+  {
+    path: '/vite/prettier',
+    name: 'vite-prettier',
+    component: ViteQualityView,
+    props: { challenge: 'prettier' },
+  },
+  {
+    path: '/vite/env',
+    name: 'vite-env',
+    component: ViteQualityView,
+    props: { challenge: 'env' },
+  },
+  {
+    path: '/vite/build',
+    name: 'vite-build',
+    component: ViteQualityView,
+    props: { challenge: 'build' },
+  },
+  {
+    path: '/vite/overview',
+    name: 'vite-overview',
+    component: ViteQualityView,
+    props: { challenge: 'all' },
   },
   {
     path: '/directives',

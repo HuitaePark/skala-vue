@@ -2,6 +2,13 @@
 import { computed, onUnmounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
+const props = defineProps({
+  challenge: {
+    type: String,
+    default: 'all',
+  },
+})
+
 const userForm = ref({
   email: '',
   agree: false,
@@ -11,6 +18,10 @@ const productRate = ref(4)
 const downloadProgress = ref(0)
 const isDownloading = ref(false)
 let downloadTimer
+
+const showForm = computed(() => props.challenge === 'all' || props.challenge === 'form')
+const showProduct = computed(() => props.challenge === 'all' || props.challenge === 'product')
+const showProgress = computed(() => props.challenge === 'all' || props.challenge === 'progress')
 
 const orderSummary = computed(() => `선택 수량 ${productQuantity.value}개 · 내가 준 점수 ${productRate.value}점`)
 
@@ -65,7 +76,7 @@ onUnmounted(() => {
 
 <template>
   <div class="ui-library-stack">
-    <section class="practice-section ui-card-section">
+    <section v-if="showForm" class="practice-section ui-card-section">
       <div class="ui-card-heading">
         <div>
           <p class="section-kicker">Element Plus · 실습 1</p>
@@ -85,7 +96,7 @@ onUnmounted(() => {
       </el-form>
     </section>
 
-    <section class="practice-section ui-card-section">
+    <section v-if="showProduct" class="practice-section ui-card-section">
       <div class="ui-card-heading">
         <div>
           <p class="section-kicker">Element Plus · 실습 2</p>
@@ -106,7 +117,7 @@ onUnmounted(() => {
       <div class="ui-live-summary"><span class="live-dot"></span>{{ orderSummary }}</div>
     </section>
 
-    <section class="practice-section ui-card-section">
+    <section v-if="showProgress" class="practice-section ui-card-section">
       <div class="ui-card-heading">
         <div>
           <p class="section-kicker">Element Plus · 실습 3</p>
