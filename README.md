@@ -14,7 +14,8 @@ npm run dev
 ## 화면 구성
 
 - `/curriculum`: PDF 1~274페이지 전체 학습 경로
-- `/`: PDF 66~71페이지 반응성·텍스트 보간·Pinia 확인
+- `/`: Code Challenge와 Hands-on으로 진입하는 SKALA-VUE 학습 홈
+- `/basic`: PDF 66~71페이지 반응성·텍스트 보간·Pinia 확인
 - `/composition`: PDF 117~144페이지 Composition API·Computed·Watchers 실습
 - `/composition/challenge`: PDF 127~144페이지 Code Challenge Composition API
 - `/composition/lifecycle`: PDF 152~155페이지 Component Lifecycle·Lifecycle Hook Code Challenge

@@ -14,7 +14,7 @@ const navGroups = [
       {
         title: '기초 문법',
         items: [
-          { label: 'Vue 기초 문법', meta: '반응성 · 텍스트 보간', to: '/', routeNames: ['home'] },
+          { label: 'Vue 기초 문법', meta: '반응성 · 텍스트 보간', to: '/basic', routeNames: ['basic'] },
           { label: 'Vue Directive', meta: 'v-if · v-for · v-bind', to: '/directives', routeNames: ['directives'] },
         ],
       },

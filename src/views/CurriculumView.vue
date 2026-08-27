@@ -24,7 +24,7 @@ const sections = [
     title: 'Vue 프로젝트 스캐폴딩',
     description: 'Vite로 프로젝트를 만들고 SFC, 디렉터리 구조, main.js, App.vue, Router와 Pinia를 연결합니다.',
     tag: '완료',
-    to: '/',
+    to: '/basic',
   },
   {
     pages: '66~71쪽',
@@ -32,7 +32,7 @@ const sections = [
     description:
       'Options API와 Composition API를 비교하고 ref 반응성, JavaScript 텍스트 보간, SampleOne·SampleTwo를 실행합니다.',
     tag: '완료',
-    to: '/',
+    to: '/basic',
   },
   {
     pages: '72~92쪽',
@@ -211,7 +211,7 @@ const sections = [
 ]
 
 const linkLabels = {
-  '/': 'Vue 기초 실습 열기',
+  '/basic': 'Vue 기초 실습 열기',
   '/composition': 'Composition API 실습 열기',
   '/composition/challenge': 'Code Challenge 실습 열기',
   '/composition/lifecycle': 'Lifecycle 실습 열기',
