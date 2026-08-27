@@ -379,7 +379,7 @@ const lastUpdated = computed(() => {
 const apiStatusMessage = computed(() => {
   if (apiErrorMessage.value) return apiErrorMessage.value
   if (selectedCity.value.dataSource === 'live') return `${selectedCity.value.name} 실시간 관측값이 적용됐습니다.`
-  if (apiKeyConfigured.value) return 'API 키가 준비됐습니다. 도시를 검색하거나 새로고침해 보세요.'
+  if (apiKeyConfigured.value) return '도시를 선택하거나 검색할 때마다 OpenWeather를 다시 조회합니다.'
   return 'API 키가 없어 안전한 Mock 데이터로 동작 중입니다.'
 })
 
@@ -396,12 +396,19 @@ watchEffect(() => {
     : `전체 도시 ${weatherList.value.length}곳을 표시하고 있습니다.`
 })
 
-function selectCity(city) {
+async function selectCity(city, options = {}) {
   weatherStore.selectCity(city)
+
+  if (options.refresh === false) return
+
+  await requestLiveWeather(city.apiQuery ?? city.name, {
+    notify: false,
+    syncQuery: false,
+  })
 }
 
 function showDetail(city) {
-  selectCity(city)
+  void selectCity(city, { refresh: props.detailMode !== 'route' })
 
   if (props.detailMode === 'route') {
     emit('click-detail', city)
@@ -435,7 +442,7 @@ function handleQueryUpdate(query) {
   )
 
   if (firstMatch) {
-    selectCity(firstMatch)
+    weatherStore.selectCity(firstMatch)
   }
 }
 

@@ -26,7 +26,7 @@ async function synchronizeCity(cityId, routeQuery) {
     weatherStore.selectCity(existingCity)
   }
 
-  if (!apiKeyConfigured.value || existingCity?.dataSource === 'live') return
+  if (!apiKeyConfigured.value) return
 
   const queryFromRoute = typeof routeQuery === 'string' ? routeQuery.trim() : ''
   const apiQuery = queryFromRoute || existingCity?.apiQuery || ''
