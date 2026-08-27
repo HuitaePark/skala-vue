@@ -79,6 +79,18 @@ npm run build:staging
 처음에는 정적인 Mock 데이터로 화면과 컴포넌트를 만들고, 이후 Composition API·Router·Pinia·Axios·환경변수·배포를
 차례로 적용해 실시간 날씨 서비스 형태로 발전시켰습니다.
 
+### Weather 페이지에 적용한 기술
+
+| 기술 | 적용 내용 |
+| --- | --- |
+| Vue 3 Composition API | ref, computed, watch, watchEffect와 Lifecycle Hook으로 상태·파생 값·비동기 흐름을 관리합니다. |
+| 컴포넌트 통신 | WeatherParent, SearchBar, WeatherCard, BaseDashboardCard를 Props·Emits·Slot으로 연결합니다. |
+| Vue Router 4 | 도시 상세 동적 경로, programmatic navigation, lazy loading과 새로고침 라우팅을 적용합니다. |
+| Pinia | 도시 목록, 선택 도시, 즐겨찾기, 로딩·오류·API 출처 상태를 weatherStore에서 공유합니다. |
+| Axios | OpenWeather Geocoding·Current Weather·Forecast·Air Pollution API를 호출하고 화면 모델로 정규화합니다. |
+| Vite 환경변수 | VITE_OPENWEATHER_API_KEY를 로컬·staging·production 빌드별로 주입합니다. |
+| 브라우저 기능·반응형 CSS | localStorage 즐겨찾기, 키보드 접근성, 모바일 레이아웃과 전체 화면 Dashboard를 구현합니다. |
+
 ### 주요 기능과 적용 내용
 
 | 기능 | 적용한 내용 |

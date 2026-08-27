@@ -120,18 +120,6 @@ const navGroups = [
             to: '/hands-on/weather',
             routeNames: ['hands-on-weather'],
           },
-          {
-            label: 'Weather Components',
-            meta: 'Props · Emits · Slot',
-            to: '/components/weather',
-            routeNames: ['components-weather'],
-          },
-          {
-            label: 'Weather Router',
-            meta: '동적 경로 · 네비게이션',
-            to: '/weather',
-            routeNames: ['weather-home', 'weather-detail', 'weather-about'],
-          },
         ],
       },
     ],
