@@ -60,5 +60,4 @@ defineProps({
   color: #9aa0b1;
   font-size: 11px;
 }
-
 </style>

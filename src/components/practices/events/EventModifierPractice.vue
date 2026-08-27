@@ -99,7 +99,9 @@ function handleCaptureChild() {
 
       <div class="event-demo-card">
         <h3>3) .once · 최초 1회만 실행</h3>
-        <p>실행 횟수: <strong>{{ onceCount }}</strong></p>
+        <p>
+          실행 횟수: <strong>{{ onceCount }}</strong>
+        </p>
         <button type="button" :disabled="onceCount > 0" @click.once="onceCount++">한 번만 증가</button>
         <button type="button" @click="resetOnce">초기화</button>
       </div>
@@ -122,12 +124,16 @@ function handleCaptureChild() {
       </div>
       <div class="event-demo-card">
         <h3>시스템 수식어</h3>
-        <button type="button" @click.ctrl.exact="systemModifierMessage = 'ctrl.exact: Ctrl만 누르고 클릭했습니다.'">Ctrl + 클릭</button>
+        <button type="button" @click.ctrl.exact="systemModifierMessage = 'ctrl.exact: Ctrl만 누르고 클릭했습니다.'">
+          Ctrl + 클릭
+        </button>
         <p class="event-feedback">{{ systemModifierMessage }}</p>
       </div>
       <div class="event-demo-card">
         <h3>마우스 수식어</h3>
-        <button type="button" @click.right.prevent="mouseModifierMessage = '.right.prevent: 우클릭을 처리했습니다.'">우클릭</button>
+        <button type="button" @click.right.prevent="mouseModifierMessage = '.right.prevent: 우클릭을 처리했습니다.'">
+          우클릭
+        </button>
         <button type="button" @click.middle="mouseModifierMessage = '.middle: 휠 클릭을 처리했습니다.'">휠 클릭</button>
         <p class="event-feedback">{{ mouseModifierMessage }}</p>
       </div>
@@ -147,7 +153,9 @@ function handleCaptureChild() {
       <div class="event-reference-row"><code>.stop</code><span>이벤트 버블링 차단</span></div>
       <div class="event-reference-row"><code>.once</code><span>최초 1회 실행 후 리스너 제거</span></div>
       <div class="event-reference-row"><code>.self</code><span>자기 자신을 직접 클릭했을 때만 실행</span></div>
-      <div class="event-reference-row"><code>.capture / .passive</code><span>캡처링 단계에서 감지 / 스크롤 성능 최적화</span></div>
+      <div class="event-reference-row">
+        <code>.capture / .passive</code><span>캡처링 단계에서 감지 / 스크롤 성능 최적화</span>
+      </div>
       <div class="event-reference-row"><code>.enter .tab .delete .esc .space</code><span>키보드 키 수식어</span></div>
       <div class="event-reference-row"><code>.ctrl .alt .shift .meta .exact</code><span>시스템 보조키 조합</span></div>
       <div class="event-reference-row"><code>.left .right .middle</code><span>마우스 버튼 수식어</span></div>

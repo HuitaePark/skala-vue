@@ -10,8 +10,8 @@ import VueStylePractice from '@/components/practices/forms/VueStylePractice.vue'
       <p class="eyebrow">PDF 106~115 · Vue Form Handling</p>
       <h1>Vue Form Handling &amp; Style</h1>
       <p>
-        v-model 양방향 바인딩부터 HTML form 요소별 매핑, v-model 수식어와 SFC 스타일 범위까지
-        강의 코드 예제를 직접 실행해 보세요.
+        v-model 양방향 바인딩부터 HTML form 요소별 매핑, v-model 수식어와 SFC 스타일 범위까지 강의 코드 예제를 직접
+        실행해 보세요.
       </p>
     </section>
 

@@ -19,9 +19,7 @@ const items = ref([
     <h2>v-for 디렉티브 학습</h2>
     <h3>1) 배열 렌더링</h3>
     <ul>
-      <li v-for="(fruit, index) in fruits" :key="index">
-        {{ index + 1 }}번 과일: {{ fruit }}
-      </li>
+      <li v-for="(fruit, index) in fruits" :key="index">{{ index + 1 }}번 과일: {{ fruit }}</li>
     </ul>
     <h3>2) 객체 렌더링</h3>
     <ul>

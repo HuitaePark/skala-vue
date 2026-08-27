@@ -1,5 +1,10 @@
 :root {
-  font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family:
+    Pretendard,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
   color: #24333b;
   background: #f4f7f8;
   font-synthesis: none;
@@ -59,7 +64,7 @@ button:disabled {
 
 code,
 pre {
-  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
 }
 
 code {
@@ -277,7 +282,10 @@ code {
   font-size: 14px;
   cursor: pointer;
   text-decoration: none;
-  transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
 }
 
 .practice-section button:hover:not(:disabled),
@@ -305,11 +313,11 @@ code {
   background: #fff;
 }
 
-.practice-section input[type="number"] {
+.practice-section input[type='number'] {
   width: 100px;
 }
 
-.practice-section input[type="text"] {
+.practice-section input[type='text'] {
   width: min(100%, 360px);
 }
 
@@ -1146,7 +1154,10 @@ fieldset.form-field {
   border-radius: 9px;
   background: #fff;
   cursor: pointer;
-  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
 }
 
 .weather-card:hover,
@@ -1460,7 +1471,10 @@ fieldset.form-field {
   background: #fff;
   font-size: 11px;
   font-weight: 700;
-  transition: border-color 160ms ease, color 160ms ease, transform 160ms ease;
+  transition:
+    border-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
 }
 
 .weather-refresh-button:hover {
@@ -1480,7 +1494,9 @@ fieldset.form-field {
 }
 
 @keyframes weather-spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .weather-city-chips {
@@ -1505,7 +1521,10 @@ fieldset.form-field {
   background: #fff;
   font-size: 11px;
   font-weight: 700;
-  transition: color 160ms ease, border-color 160ms ease, background-color 160ms ease;
+  transition:
+    color 160ms ease,
+    border-color 160ms ease,
+    background-color 160ms ease;
 }
 
 .weather-city-chip span {
@@ -1545,7 +1564,9 @@ fieldset.form-field {
   height: 220px;
   border: 1px solid rgba(255, 255, 255, 0.13);
   border-radius: 50%;
-  box-shadow: 0 0 0 20px rgba(255, 255, 255, 0.04), 0 0 0 42px rgba(255, 255, 255, 0.03);
+  box-shadow:
+    0 0 0 20px rgba(255, 255, 255, 0.04),
+    0 0 0 42px rgba(255, 255, 255, 0.03);
   content: '';
   pointer-events: none;
 }
@@ -1762,7 +1783,9 @@ fieldset.form-field {
   border: 1px solid transparent;
   border-radius: 11px;
   cursor: pointer;
-  transition: border-color 160ms ease, background-color 160ms ease;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease;
 }
 
 .weather-location-row:hover,
@@ -1886,12 +1909,30 @@ fieldset.form-field {
   font-weight: 800;
 }
 
-.weather-stat-icon.tone-mint { color: #42a579; background: #e6f8ef; }
-.weather-stat-icon.tone-blue { color: #4e83d2; background: #eaf2ff; }
-.weather-stat-icon.tone-lavender { color: #7862cb; background: #f0ecff; }
-.weather-stat-icon.tone-sand { color: #bd8a48; background: #fff4df; }
-.weather-stat-icon.tone-sky { color: #3f8eb5; background: #e8f6fb; }
-.weather-stat-icon.tone-rose { color: #c25e85; background: #fff0f5; }
+.weather-stat-icon.tone-mint {
+  color: #42a579;
+  background: #e6f8ef;
+}
+.weather-stat-icon.tone-blue {
+  color: #4e83d2;
+  background: #eaf2ff;
+}
+.weather-stat-icon.tone-lavender {
+  color: #7862cb;
+  background: #f0ecff;
+}
+.weather-stat-icon.tone-sand {
+  color: #bd8a48;
+  background: #fff4df;
+}
+.weather-stat-icon.tone-sky {
+  color: #3f8eb5;
+  background: #e8f6fb;
+}
+.weather-stat-icon.tone-rose {
+  color: #c25e85;
+  background: #fff0f5;
+}
 
 .weather-stat-card > div {
   min-width: 0;
@@ -2718,7 +2759,7 @@ fieldset.form-field {
 
 .lifecycle-log-hook {
   color: #5a58a7;
-  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
   font-size: 10px;
   font-weight: 700;
 }
@@ -2890,7 +2931,7 @@ fieldset.form-field {
 .props-field span {
   flex: 0 0 auto;
   color: #4d6271;
-  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
   font-size: 11px;
 }
 
@@ -3170,7 +3211,7 @@ fieldset.form-field {
 
 .props-event-log-list li > span {
   color: #8b5b77;
-  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
   font-size: 10px;
   font-weight: 700;
 }

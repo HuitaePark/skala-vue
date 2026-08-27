@@ -26,8 +26,8 @@ function readKeyboardEvent(event) {
     <p class="section-kicker">97~100쪽 · JavaScript Event Object</p>
     <h2>이벤트 객체와 <code>$event</code> 전달</h2>
     <p>
-      브라우저는 이벤트가 발생할 때 <code>target</code>, <code>currentTarget</code>,
-      <code>type</code>, 좌표와 키보드 정보가 담긴 Event Object를 자동으로 전달합니다.
+      브라우저는 이벤트가 발생할 때 <code>target</code>, <code>currentTarget</code>, <code>type</code>, 좌표와 키보드
+      정보가 담긴 Event Object를 자동으로 전달합니다.
     </p>
 
     <pre class="code-sample" v-pre><code>const getOnlyEvent = (e) =&gt; {

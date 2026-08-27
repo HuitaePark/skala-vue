@@ -61,7 +61,7 @@ function openDetail(city) {
   border-radius: 7px;
   color: #287550;
   background: #eaf8f1;
-  font-family: "SFMono-Regular", Consolas, monospace;
+  font-family: 'SFMono-Regular', Consolas, monospace;
   font-size: 11px;
   font-weight: 800;
   white-space: nowrap;

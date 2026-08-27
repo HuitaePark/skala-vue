@@ -59,8 +59,12 @@ function selectItem(item) {
     </div>
 
     <div class="props-child-stats">
-      <span><small>likes</small><strong>{{ likes }}</strong></span>
-      <span><small>status</small><strong>{{ status }}</strong></span>
+      <span
+        ><small>likes</small><strong>{{ likes }}</strong></span
+      >
+      <span
+        ><small>status</small><strong>{{ status }}</strong></span
+      >
     </div>
 
     <p class="props-child-note">자식은 Props를 직접 바꾸지 않고 Emit으로 부모에게 변경을 요청합니다.</p>

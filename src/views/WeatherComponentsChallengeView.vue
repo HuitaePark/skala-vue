@@ -35,8 +35,8 @@ const componentMap = [
       <p class="eyebrow">PDF 178 · Hands on · Code Challenge</p>
       <h1>Weather Component</h1>
       <p>
-        기존 Weather Dashboard의 기능은 유지하면서 부모·공통 카드·검색·날씨 카드를 4개의 Vue
-        Component로 분리했습니다. 각 컴포넌트의 Props, Emits, Slot 연결을 확인해 보세요.
+        기존 Weather Dashboard의 기능은 유지하면서 부모·공통 카드·검색·날씨 카드를 4개의 Vue Component로 분리했습니다.
+        각 컴포넌트의 Props, Emits, Slot 연결을 확인해 보세요.
       </p>
     </section>
 
@@ -162,7 +162,7 @@ const componentMap = [
   border-radius: 5px;
   color: #287550;
   background: #eaf8f1;
-  font-family: "SFMono-Regular", Consolas, monospace;
+  font-family: 'SFMono-Regular', Consolas, monospace;
   font-size: 11px;
   font-weight: 800;
 }

@@ -33,7 +33,11 @@ const lifecycleHooks = [
   { phase: '생성 전', hook: 'setup()', description: '반응형 상태와 컴포넌트 로직을 초기화합니다.' },
   { phase: '마운트 전', hook: 'onBeforeMount()', description: 'DOM에 연결되기 직전에 실행합니다.' },
   { phase: '마운트 완료', hook: 'onMounted()', description: 'DOM 접근, API 요청, 타이머 시작에 사용합니다.' },
-  { phase: '업데이트 전', hook: 'onBeforeUpdate()', description: '반응형 데이터 변경으로 DOM이 갱신되기 전 실행합니다.' },
+  {
+    phase: '업데이트 전',
+    hook: 'onBeforeUpdate()',
+    description: '반응형 데이터 변경으로 DOM이 갱신되기 전 실행합니다.',
+  },
   { phase: '업데이트 후', hook: 'onUpdated()', description: 'DOM 업데이트가 완료된 뒤 실행합니다.' },
   { phase: '언마운트 전', hook: 'onBeforeUnmount()', description: '컴포넌트 제거 직전에 정리 작업을 준비합니다.' },
   { phase: '언마운트 완료', hook: 'onUnmounted()', description: '타이머·이벤트 리스너 정리 완료를 확인합니다.' },
@@ -46,7 +50,9 @@ const lifecycleLogs = ref([])
 const lastHook = ref('onMounted() 로그를 기다리는 중입니다.')
 
 const lifecycleState = computed(() => (showProbe.value ? 'mounted' : 'unmounted'))
-const lifecycleStateLabel = computed(() => (showProbe.value ? 'Mounted · 화면에 표시 중' : 'Unmounted · 화면에서 제거됨'))
+const lifecycleStateLabel = computed(() =>
+  showProbe.value ? 'Mounted · 화면에 표시 중' : 'Unmounted · 화면에서 제거됨',
+)
 
 function recordLifecycle(entry) {
   lastHook.value = `${entry.hook} · ${entry.detail}`
@@ -80,8 +86,8 @@ function clearLifecycleLogs() {
       <p class="section-kicker">152~153쪽 · Component Lifecycle</p>
       <h2>컴포넌트 생명주기 단계와 Hook</h2>
       <p>
-        Vue 컴포넌트는 생성·부착·갱신·소멸 단계를 거칩니다. 각 단계의 Hook을 이용하면 DOM이
-        준비되는 시점, 반응형 값이 갱신되는 시점, 타이머를 정리해야 하는 시점을 제어할 수 있습니다.
+        Vue 컴포넌트는 생성·부착·갱신·소멸 단계를 거칩니다. 각 단계의 Hook을 이용하면 DOM이 준비되는 시점, 반응형 값이
+        갱신되는 시점, 타이머를 정리해야 하는 시점을 제어할 수 있습니다.
       </p>
 
       <div class="lifecycle-stage-grid">
@@ -107,8 +113,8 @@ function clearLifecycleLogs() {
       <p class="section-kicker">154~155쪽 · Code Challenge</p>
       <h2>Component Lifecycle Hook 실습</h2>
       <p>
-        아래 자식 컴포넌트는 마운트될 때 3초 타이머를 시작하고, 부모 값이 바뀌면 업데이트 Hook을
-        기록합니다. 컴포넌트를 숨기면 <code>onBeforeUnmount()</code>에서 타이머를 정리합니다.
+        아래 자식 컴포넌트는 마운트될 때 3초 타이머를 시작하고, 부모 값이 바뀌면 업데이트 Hook을 기록합니다. 컴포넌트를
+        숨기면 <code>onBeforeUnmount()</code>에서 타이머를 정리합니다.
       </p>
 
       <pre class="code-sample" v-pre><code>onMounted(() =&gt; {
@@ -153,8 +159,12 @@ onUnmounted(() =&gt; {
           </div>
 
           <div class="lifecycle-live-stats">
-            <span><small>부모 update signal</small><strong>{{ updateSignal }}</strong></span>
-            <span><small>timer tick</small><strong>{{ timerTickCount }}</strong></span>
+            <span
+              ><small>부모 update signal</small><strong>{{ updateSignal }}</strong></span
+            >
+            <span
+              ><small>timer tick</small><strong>{{ timerTickCount }}</strong></span
+            >
           </div>
         </article>
 

@@ -18,8 +18,8 @@ import VTextPractice from '@/components/practices/directives/VTextPractice.vue'
       <p class="eyebrow">Code Challenge · Vue Directive</p>
       <h1>Vue Directive</h1>
       <p>
-        PDF 73~92페이지의 소스코드를 실습 컴포넌트로 분리했습니다. 각 영역을 독립적으로
-        확인하며 directive의 동작 차이를 비교해 보세요.
+        PDF 73~92페이지의 소스코드를 실습 컴포넌트로 분리했습니다. 각 영역을 독립적으로 확인하며 directive의 동작 차이를
+        비교해 보세요.
       </p>
     </section>
 

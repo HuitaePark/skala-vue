@@ -44,8 +44,8 @@ function handleSubmit() {
     <p class="section-kicker">94~96쪽 · v-on Event Handler</p>
     <h2>v-on 기본 문법과 이벤트 핸들러</h2>
     <p>
-      <code>v-on:click</code>의 축약형은 <code>@click</code>입니다. 짧은 인라인 연산은 템플릿에서,
-      복잡한 로직은 <code>&lt;script setup&gt;</code>의 메서드로 분리합니다.
+      <code>v-on:click</code>의 축약형은 <code>@click</code>입니다. 짧은 인라인 연산은 템플릿에서, 복잡한 로직은
+      <code>&lt;script setup&gt;</code>의 메서드로 분리합니다.
     </p>
 
     <pre class="code-sample" v-pre><code>&lt;button v-on:click="count++"&gt;클릭&lt;/button&gt;
@@ -59,7 +59,9 @@ function handleClick() {
     <div class="event-demo-grid">
       <div class="event-demo-card">
         <h3>1) 인라인 연산 처리</h3>
-        <p>현재 카운트: <strong>{{ count }}</strong></p>
+        <p>
+          현재 카운트: <strong>{{ count }}</strong>
+        </p>
         <button type="button" @click="count++">1씩 증가</button>
       </div>
 
@@ -75,7 +77,14 @@ function handleClick() {
       <div class="event-observer-grid">
         <label>
           input
-          <input :value="inputValue" type="text" placeholder="입력 이벤트" @input="handleInput" @keydown="handleKey" @keyup="handleKey" />
+          <input
+            :value="inputValue"
+            type="text"
+            placeholder="입력 이벤트"
+            @input="handleInput"
+            @keydown="handleKey"
+            @keyup="handleKey"
+          />
         </label>
         <label>
           change
@@ -86,9 +95,17 @@ function handleClick() {
           </select>
         </label>
       </div>
-      <p>마지막 이벤트: <strong>{{ lastEvent }}</strong></p>
-      <p>키보드 상태: <strong>{{ keyMessage }}</strong></p>
-      <div class="event-hover-target" @mouseenter="hoverMessage = 'mouseenter: 요소 안으로 들어왔습니다.'" @mouseleave="hoverMessage = 'mouseleave: 요소 밖으로 나갔습니다.'">
+      <p>
+        마지막 이벤트: <strong>{{ lastEvent }}</strong>
+      </p>
+      <p>
+        키보드 상태: <strong>{{ keyMessage }}</strong>
+      </p>
+      <div
+        class="event-hover-target"
+        @mouseenter="hoverMessage = 'mouseenter: 요소 안으로 들어왔습니다.'"
+        @mouseleave="hoverMessage = 'mouseleave: 요소 밖으로 나갔습니다.'"
+      >
         {{ hoverMessage }}
       </div>
       <form class="event-form" @submit.prevent="handleSubmit">
@@ -103,8 +120,12 @@ function handleClick() {
       <div class="event-reference-row"><code>click</code><span>클릭 이벤트</span></div>
       <div class="event-reference-row"><code>submit</code><span>폼 제출 이벤트</span></div>
       <div class="event-reference-row"><code>keyup / keydown</code><span>키를 뗐을 때 / 눌렀을 때</span></div>
-      <div class="event-reference-row"><code>input / change</code><span>입력 필드 변경 / 값 변경 후 포커스 아웃</span></div>
-      <div class="event-reference-row"><code>mouseenter / mouseleave</code><span>요소 위로 들어옴 / 요소에서 벗어남</span></div>
+      <div class="event-reference-row">
+        <code>input / change</code><span>입력 필드 변경 / 값 변경 후 포커스 아웃</span>
+      </div>
+      <div class="event-reference-row">
+        <code>mouseenter / mouseleave</code><span>요소 위로 들어옴 / 요소에서 벗어남</span>
+      </div>
     </div>
   </section>
 </template>

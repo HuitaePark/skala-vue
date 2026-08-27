@@ -3,8 +3,8 @@
     <p class="section-kicker">113~114쪽 · Vue Style</p>
     <h2>Scoped Style과 External Style</h2>
     <p>
-      <code>&lt;style scoped&gt;</code>는 현재 컴포넌트의 HTML에만 적용되고, 외부 CSS는 프로젝트의
-      여러 컴포넌트에서 재사용할 수 있습니다.
+      <code>&lt;style scoped&gt;</code>는 현재 컴포넌트의 HTML에만 적용되고, 외부 CSS는 프로젝트의 여러 컴포넌트에서
+      재사용할 수 있습니다.
     </p>
 
     <pre class="code-sample" v-pre><code>&lt;style scoped&gt;

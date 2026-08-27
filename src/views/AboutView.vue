@@ -4,8 +4,8 @@
       <p class="eyebrow">Router · AboutView</p>
       <h1>About SKALA-VUE</h1>
       <p>
-        이 페이지는 PDF의 HMR 실습 대상인 <code>src/views/AboutView.vue</code>입니다.
-        이 문장을 수정하고 저장하면 브라우저 화면에 즉시 반영됩니다.
+        이 페이지는 PDF의 HMR 실습 대상인 <code>src/views/AboutView.vue</code>입니다. 이 문장을 수정하고 저장하면
+        브라우저 화면에 즉시 반영됩니다.
       </p>
     </section>
 

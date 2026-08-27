@@ -28,28 +28,42 @@ const priceType = computed(() => typeof price.value)
       <div class="form-demo-card">
         <h3>1) .lazy (change 시점 반영)</h3>
         <input v-model.lazy="lazyText" type="text" placeholder="입력 후 Enter 또는 외부 클릭" />
-        <p>실시간이 아닌 확정된 값: <strong>{{ lazyText || '아직 확정 없음' }}</strong></p>
+        <p>
+          실시간이 아닌 확정된 값: <strong>{{ lazyText || '아직 확정 없음' }}</strong>
+        </p>
       </div>
 
       <div class="form-demo-card">
         <h3>2) .number (Number 자동 형변환)</h3>
         <input v-model.number="age" type="text" placeholder="나이를 입력하세요" />
-        <p>입력된 값: <strong>{{ age || '아직 입력 없음' }}</strong></p>
-        <p>데이터 타입: <strong>{{ ageType }}</strong></p>
+        <p>
+          입력된 값: <strong>{{ age || '아직 입력 없음' }}</strong>
+        </p>
+        <p>
+          데이터 타입: <strong>{{ ageType }}</strong>
+        </p>
       </div>
 
       <div class="form-demo-card">
         <h3>3) .trim (양끝 공백 제거)</h3>
         <input v-model.trim="userEmail" type="text" placeholder="앞뒤 공백을 포함해 입력" />
-        <p>공백 제거된 값: <strong>{{ userEmail || '아직 입력 없음' }}</strong></p>
-        <p>문자열 길이: <strong>{{ userEmail.length }}</strong></p>
+        <p>
+          공백 제거된 값: <strong>{{ userEmail || '아직 입력 없음' }}</strong>
+        </p>
+        <p>
+          문자열 길이: <strong>{{ userEmail.length }}</strong>
+        </p>
       </div>
 
       <div class="form-demo-card">
         <h3>4) Chaining (.trim.number)</h3>
         <input v-model.trim.number="price" type="text" placeholder="공백과 숫자를 섞어 입력" />
-        <p>처리된 값: <strong>{{ price || '아직 입력 없음' }}</strong></p>
-        <p>데이터 타입: <strong>{{ priceType }}</strong></p>
+        <p>
+          처리된 값: <strong>{{ price || '아직 입력 없음' }}</strong>
+        </p>
+        <p>
+          데이터 타입: <strong>{{ priceType }}</strong>
+        </p>
       </div>
     </div>
 

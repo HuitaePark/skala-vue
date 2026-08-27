@@ -23,8 +23,8 @@ const formState = computed(() => ({
     <p class="section-kicker">106~109쪽 · Form Data Binding</p>
     <h2>v-model 양방향 데이터 바인딩</h2>
     <p>
-      <code>v-model</code>은 HTML 입력 요소와 Vue의 반응성 데이터를 연결합니다. 입력값이 바뀌면
-      상태가 바뀌고, 상태가 바뀌면 입력 화면도 함께 업데이트됩니다.
+      <code>v-model</code>은 HTML 입력 요소와 Vue의 반응성 데이터를 연결합니다. 입력값이 바뀌면 상태가 바뀌고, 상태가
+      바뀌면 입력 화면도 함께 업데이트됩니다.
     </p>
 
     <pre class="code-sample" v-pre><code>const text1 = ref('')
@@ -37,12 +37,16 @@ const text2 = ref('')
       <div class="form-demo-card">
         <h3>1) v-model 축약 문법 (양방향)</h3>
         <input v-model="text1" type="text" placeholder="여기에 입력하세요" />
-        <p>입력된 값: <strong>{{ text1 || '아직 입력 없음' }}</strong></p>
+        <p>
+          입력된 값: <strong>{{ text1 || '아직 입력 없음' }}</strong>
+        </p>
       </div>
       <div class="form-demo-card">
         <h3>2) 내부 동작 원리 (단방향 + 이벤트)</h3>
         <input :value="text2" type="text" placeholder="원리 파악용 입력창" @input="text2 = $event.target.value" />
-        <p>입력된 값: <strong>{{ text2 || '아직 입력 없음' }}</strong></p>
+        <p>
+          입력된 값: <strong>{{ text2 || '아직 입력 없음' }}</strong>
+        </p>
       </div>
     </div>
 

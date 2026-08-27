@@ -19,8 +19,6 @@ const isButtonDisabled = ref(true)
     <h3>3) 버튼 비활성화 제어</h3>
     <p>현재 버튼 사용 불가능 상태: {{ isButtonDisabled }}</p>
     <button type="button" :disabled="isButtonDisabled">동의해야 클릭할 수 있는 버튼</button>
-    <button type="button" @click="isButtonDisabled = !isButtonDisabled">
-      위 버튼 잠금 해제/토글하기
-    </button>
+    <button type="button" @click="isButtonDisabled = !isButtonDisabled">위 버튼 잠금 해제/토글하기</button>
   </div>
 </template>

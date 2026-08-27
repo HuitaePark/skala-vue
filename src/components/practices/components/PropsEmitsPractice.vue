@@ -86,8 +86,8 @@ function clearEventLogs() {
       <p class="section-kicker">156쪽 · Props &amp; Emits</p>
       <h2>부모와 자식 컴포넌트의 데이터 흐름</h2>
       <p>
-        Props는 부모에서 자식으로 전달하는 반응형 데이터이고, Emits는 자식이 부모에게 사용자
-        동작이나 변경 요청을 알리는 이벤트입니다. 아래 예제는 PDF의 단방향 데이터 흐름을 직접 실행합니다.
+        Props는 부모에서 자식으로 전달하는 반응형 데이터이고, Emits는 자식이 부모에게 사용자 동작이나 변경 요청을 알리는
+        이벤트입니다. 아래 예제는 PDF의 단방향 데이터 흐름을 직접 실행합니다.
       </p>
 
       <div class="props-flow-grid">
@@ -110,8 +110,8 @@ function clearEventLogs() {
       <p class="section-kicker">157~164쪽 · defineProps()</p>
       <h2>defineProps()로 부모 데이터 받기</h2>
       <p>
-        배열 문법과 객체 문법으로 Props를 선언하고, required·default·type 유효성 조건을 함께 확인합니다.
-        자식 컴포넌트는 전달받은 Props를 읽기만 하며 직접 수정하지 않습니다.
+        배열 문법과 객체 문법으로 Props를 선언하고, required·default·type 유효성 조건을 함께 확인합니다. 자식 컴포넌트는
+        전달받은 Props를 읽기만 하며 직접 수정하지 않습니다.
       </p>
 
       <pre class="code-sample" v-pre><code>const props = defineProps({
@@ -145,12 +145,20 @@ function clearEventLogs() {
           </div>
 
           <div class="props-derived-grid">
-            <span><small>likes</small><strong>{{ parentLikes }}</strong></span>
-            <span><small>computed 상태</small><strong>{{ popularityLabel }}</strong></span>
-            <span><small>선택 항목</small><strong>{{ selectedItem.label }}</strong></span>
+            <span
+              ><small>likes</small><strong>{{ parentLikes }}</strong></span
+            >
+            <span
+              ><small>computed 상태</small><strong>{{ popularityLabel }}</strong></span
+            >
+            <span
+              ><small>선택 항목</small><strong>{{ selectedItem.label }}</strong></span
+            >
           </div>
 
-          <p class="props-readonly-note"><code>readonly</code> child Props · 부모 상태를 바꾸면 자식 화면이 함께 갱신됩니다.</p>
+          <p class="props-readonly-note">
+            <code>readonly</code> child Props · 부모 상태를 바꾸면 자식 화면이 함께 갱신됩니다.
+          </p>
         </article>
 
         <PropsEmitsChild
@@ -192,8 +200,12 @@ function sendToParent() {
           <span class="props-card-label">PARENT EVENT HANDLER</span>
           <h3>선택된 데이터</h3>
           <p class="props-selected-message">{{ selectedItem.label }}</p>
-          <p>현재 상태: <strong>{{ parentStatus }}</strong></p>
-          <p>Props 변경 감시: <strong>{{ parentData }}</strong></p>
+          <p>
+            현재 상태: <strong>{{ parentStatus }}</strong>
+          </p>
+          <p>
+            Props 변경 감시: <strong>{{ parentData }}</strong>
+          </p>
           <button type="button" class="props-clear-button" @click="clearEventLogs">이벤트 로그 초기화</button>
         </article>
 

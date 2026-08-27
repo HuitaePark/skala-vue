@@ -67,8 +67,12 @@ onUnmounted(() => {
     </div>
     <p class="lifecycle-probe-title">컴포넌트가 화면에 살아 있습니다.</p>
     <div class="lifecycle-probe-values">
-      <span><small>부모 update signal</small><strong>{{ signal }}</strong></span>
-      <span><small>3초 timer tick</small><strong>{{ timerTick }}</strong></span>
+      <span
+        ><small>부모 update signal</small><strong>{{ signal }}</strong></span
+      >
+      <span
+        ><small>3초 timer tick</small><strong>{{ timerTick }}</strong></span
+      >
     </div>
     <p class="lifecycle-probe-note">부모 값을 변경하면 업데이트 훅이, 숨기면 언마운트 훅이 실행됩니다.</p>
   </div>
