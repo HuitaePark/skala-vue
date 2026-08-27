@@ -33,6 +33,7 @@ async function synchronizeCity(cityId, routeQuery) {
 
   if (!apiQuery) return
 
+  // 상세 라우트에 다시 들어올 때도 기존 live 값을 그대로 쓰지 않고 최신 관측값을 확인합니다.
   const result = await weatherStore.loadLiveWeather(apiQuery)
 
   if (result.ok && result.city.id !== normalizedCityId) {

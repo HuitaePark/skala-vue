@@ -233,6 +233,7 @@ export const useWeatherStore = defineStore('weather', () => {
       return { ok: false, reason: 'empty-query', message: errorMessage.value }
     }
 
+    // 도시를 빠르게 바꿀 수 있으므로 요청 순서를 기록해 최신 요청만 화면에 반영합니다.
     const requestId = ++latestRequestId
     isLoading.value = true
     errorMessage.value = ''
@@ -240,6 +241,7 @@ export const useWeatherStore = defineStore('weather', () => {
     try {
       const { currentData, forecastData, airPollutionData } = await fetchOpenWeatherBundle(normalizedQuery)
 
+      // 먼저 시작한 요청이 늦게 도착해 현재 선택 도시를 덮어쓰지 않도록 합니다.
       if (requestId !== latestRequestId) {
         return { ok: false, reason: 'stale-request', message: '최신 검색 결과를 기다리는 중입니다.' }
       }

@@ -397,6 +397,7 @@ watchEffect(() => {
 })
 
 async function selectCity(city, options = {}) {
+  // 먼저 선택 상태를 바꾸고, API 응답이 도착하면 같은 도시 카드에 최신 값을 덮어씁니다.
   weatherStore.selectCity(city)
 
   if (options.refresh === false) return

@@ -107,6 +107,8 @@ export async function fetchOpenWeatherForecast(cityName, units = 'metric') {
 
 export async function fetchOpenWeatherBundle(cityName, units = 'metric') {
   const location = await fetchOpenWeatherCoordinates(cityName)
+
+  // 같은 좌표를 사용하는 현재값·예보·대기질은 병렬로 받아 대시보드 갱신 시간을 줄입니다.
   const [currentData, forecastData, airPollutionData] = await Promise.all([
     fetchOpenWeatherByCoordinates(location.lat, location.lon, units),
     fetchOpenWeatherForecastByCoordinates(location.lat, location.lon, units),
