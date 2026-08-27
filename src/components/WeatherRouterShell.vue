@@ -1,3 +1,7 @@
+<script setup>
+import UnitToggler from '@/components/practices/pinia/UnitToggler.vue'
+</script>
+
 <template>
   <div class="weather-router-page">
     <header class="weather-router-header">
@@ -9,10 +13,13 @@
         </span>
       </RouterLink>
 
-      <nav class="weather-router-nav" aria-label="날씨 메뉴">
-        <RouterLink to="/weather">날씨 대시보드</RouterLink>
-        <RouterLink to="/weather/about">서비스 소개</RouterLink>
-      </nav>
+      <div class="weather-router-actions">
+        <UnitToggler />
+        <nav class="weather-router-nav" aria-label="날씨 메뉴">
+          <RouterLink to="/weather">날씨 대시보드</RouterLink>
+          <RouterLink to="/weather/about">서비스 소개</RouterLink>
+        </nav>
+      </div>
     </header>
 
     <main class="weather-router-content">
@@ -79,6 +86,12 @@
   gap: 6px;
 }
 
+.weather-router-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .weather-router-nav a {
   padding: 8px 10px;
   border-radius: 8px;
@@ -111,6 +124,16 @@
 
   .weather-router-nav {
     width: 100%;
+  }
+
+  .weather-router-actions {
+    width: 100%;
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .weather-router-actions :deep(.unit-toggler) {
+    align-self: flex-start;
   }
 
   .weather-router-nav a {

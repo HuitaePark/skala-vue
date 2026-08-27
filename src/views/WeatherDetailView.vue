@@ -3,9 +3,16 @@ import { onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import WeatherRouterShell from '@/components/WeatherRouterShell.vue'
 import weatherRouteData from '@/data/weatherRouteData.js'
+import { useConfigStore } from '@/stores/configStore.js'
+import { toDisplayTemperature } from '@/utils/temperature.js'
 
 const route = useRoute()
 const city = ref(null)
+const configStore = useConfigStore()
+
+function displayTemperature(value) {
+  return toDisplayTemperature(value, configStore.unit)
+}
 
 function loadCity(cityId) {
   city.value = weatherRouteData.find((item) => item.id === cityId) ?? null
@@ -34,30 +41,58 @@ watch(() => route.params.cityId, loadCity)
           <div>
             <span class="weather-detail-icon" aria-hidden="true">{{ city.icon }}</span>
             <p class="weather-detail-label">{{ city.region }}</p>
-            <h2>{{ city.name }} <small>{{ city.status }}</small></h2>
+            <h2>
+              {{ city.name }} <small>{{ city.status }}</small>
+            </h2>
             <p class="weather-detail-description">{{ city.description }}</p>
           </div>
-          <div class="weather-detail-temperature"><strong>{{ city.temp }}°</strong><span>체감 {{ city.feelsLike }}°</span></div>
+          <div class="weather-detail-temperature">
+            <strong>{{ displayTemperature(city.temp) }}{{ configStore.unitSymbol }}</strong
+            ><span>체감 {{ displayTemperature(city.feelsLike) }}{{ configStore.unitSymbol }}</span>
+          </div>
         </div>
 
         <div class="weather-detail-stat-grid">
-          <span><small>최고 / 최저</small><strong>{{ city.high }}° / {{ city.low }}°</strong></span>
-          <span><small>습도</small><strong>{{ city.humidity }}</strong></span>
-          <span><small>풍속</small><strong>{{ city.wind }}</strong></span>
-          <span><small>가시거리</small><strong>{{ city.visibility }}</strong></span>
-          <span><small>기압</small><strong>{{ city.pressure }}</strong></span>
-          <span><small>대기질</small><strong>{{ city.airQuality }}</strong></span>
-          <span><small>자외선</small><strong>{{ city.uvIndex }}</strong></span>
-          <span><small>일출 / 일몰</small><strong>{{ city.sunrise }} / {{ city.sunset }}</strong></span>
+          <span
+            ><small>최고 / 최저</small
+            ><strong
+              >{{ displayTemperature(city.high) }}{{ configStore.unitSymbol }} / {{ displayTemperature(city.low)
+              }}{{ configStore.unitSymbol }}</strong
+            ></span
+          >
+          <span
+            ><small>습도</small><strong>{{ city.humidity }}</strong></span
+          >
+          <span
+            ><small>풍속</small><strong>{{ city.wind }}</strong></span
+          >
+          <span
+            ><small>가시거리</small><strong>{{ city.visibility }}</strong></span
+          >
+          <span
+            ><small>기압</small><strong>{{ city.pressure }}</strong></span
+          >
+          <span
+            ><small>대기질</small><strong>{{ city.airQuality }}</strong></span
+          >
+          <span
+            ><small>자외선</small><strong>{{ city.uvIndex }}</strong></span
+          >
+          <span
+            ><small>일출 / 일몰</small><strong>{{ city.sunrise }} / {{ city.sunset }}</strong></span
+          >
         </div>
 
         <div class="weather-detail-forecast">
-          <div class="weather-detail-section-heading"><h3>시간대별 예보</h3><span>Mock Data</span></div>
+          <div class="weather-detail-section-heading">
+            <h3>시간대별 예보</h3>
+            <span>Mock Data</span>
+          </div>
           <div class="weather-detail-forecast-list">
             <div v-for="item in city.forecast" :key="`${city.id}-${item.time}`" class="weather-detail-forecast-item">
               <span>{{ item.time }}</span>
               <strong aria-hidden="true">{{ item.icon }}</strong>
-              <b>{{ item.temp }}°</b>
+              <b>{{ displayTemperature(item.temp) }}{{ configStore.unitSymbol }}</b>
               <small>강수확률 {{ item.rain }}</small>
             </div>
           </div>
@@ -67,7 +102,10 @@ watch(() => route.params.cityId, loadCity)
       <article v-else class="weather-detail-not-found">
         <span aria-hidden="true">🔎</span>
         <h2>도시 정보를 찾을 수 없습니다.</h2>
-        <p><code>{{ route.params.cityId }}</code>에 해당하는 Mock Data가 없습니다.</p>
+        <p>
+          <code>{{ route.params.cityId }}</code
+          >에 해당하는 Mock Data가 없습니다.
+        </p>
         <RouterLink class="weather-detail-primary" to="/weather">날씨 메인으로 이동</RouterLink>
       </article>
     </section>

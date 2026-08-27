@@ -1,8 +1,10 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import BaseDashboardCard from './BaseDashboardCard.vue'
 import SearchBar from './SearchBar.vue'
 import WeatherCard from './WeatherCard.vue'
+import { useConfigStore } from '@/stores/configStore.js'
+import { toDisplayTemperature } from '@/utils/temperature.js'
 
 const props = defineProps({
   detailMode: {
@@ -12,6 +14,11 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['click-detail'])
+const configStore = useConfigStore()
+
+function displayTemperature(value) {
+  return toDisplayTemperature(value, configStore.unit)
+}
 
 const weatherList = ref([
   {
@@ -275,22 +282,71 @@ const weatherList = ref([
 const cityQuery = ref('')
 const selectedCityId = ref('city_01')
 const detailCityId = ref(null)
-const favoriteCityIds = ref(['city_01', 'city_03'])
+const favoriteCityIds = ref(loadFavoriteCityIds())
+const showFavoritesOnly = ref(false)
+const alertDismissed = ref(false)
 const lastUpdated = ref('2 min ago')
 const isRefreshing = ref(false)
 
 const filteredWeather = computed(() => {
   const query = cityQuery.value.trim().toLowerCase()
+  const source = showFavoritesOnly.value ? weatherList.value.filter((city) => isFavorite(city.id)) : weatherList.value
 
   if (!query) {
-    return weatherList.value
+    return source
   }
 
-  return weatherList.value.filter((city) => `${city.name} ${city.region}`.toLowerCase().includes(query))
+  return source.filter((city) => `${city.name} ${city.region}`.toLowerCase().includes(query))
 })
 
-const selectedCity = computed(() => weatherList.value.find((city) => city.id === selectedCityId.value) ?? weatherList.value[0])
+const selectedCity = computed(
+  () => weatherList.value.find((city) => city.id === selectedCityId.value) ?? weatherList.value[0],
+)
 const detailCity = computed(() => weatherList.value.find((city) => city.id === detailCityId.value))
+const favoriteCitiesCount = computed(() => favoriteCityIds.value.length)
+const weatherAlert = computed(() => {
+  const city = selectedCity.value
+  const precipitation = Number.parseInt(city.precipitation, 10)
+  const uvIndex = Number.parseInt(city.uvIndex, 10)
+
+  if (precipitation >= 60) {
+    return {
+      tone: 'rain',
+      icon: '☔',
+      title: '우산을 챙기세요',
+      message: `${city.name}은(는) 강수확률 ${city.precipitation}로 비가 예상돼요. 실내 일정이나 짧은 외출을 추천합니다.`,
+      action: '우산 준비',
+    }
+  }
+
+  if (city.temp >= 30) {
+    return {
+      tone: 'heat',
+      icon: '☀️',
+      title: '더위 주의보',
+      message: `현재 ${city.name}은(는) ${city.temp}°로 더워요. 물을 자주 마시고 한낮 활동을 줄여보세요.`,
+      action: '수분 보충',
+    }
+  }
+
+  if (uvIndex >= 8) {
+    return {
+      tone: 'uv',
+      icon: '🧴',
+      title: '자외선이 강해요',
+      message: `자외선 지수 ${city.uvIndex}입니다. 외출 전 선크림과 모자를 준비해 보세요.`,
+      action: '햇빛 대비',
+    }
+  }
+
+  return {
+    tone: 'clear',
+    icon: '🌿',
+    title: '외출하기 좋은 날',
+    message: `${city.name}은(는) ${city.bestWindow} 사이가 가장 편안해요. ${city.description}`,
+    action: '일정 계획',
+  }
+})
 const selectedMetrics = computed(() => [
   { label: 'Humidity', value: selectedCity.value.humidity, icon: '◌', tone: 'mint' },
   { label: 'Wind', value: selectedCity.value.wind, icon: '↗', tone: 'blue' },
@@ -299,6 +355,37 @@ const selectedMetrics = computed(() => [
   { label: 'Air quality', value: selectedCity.value.airQuality, icon: '≋', tone: 'sky' },
   { label: 'UV index', value: selectedCity.value.uvIndex, icon: '☼', tone: 'rose' },
 ])
+
+function loadFavoriteCityIds() {
+  if (typeof window === 'undefined') {
+    return ['city_01', 'city_03']
+  }
+
+  try {
+    const storedIds = JSON.parse(window.localStorage.getItem('skala-vue:weather-favorites') ?? 'null')
+    return Array.isArray(storedIds) && storedIds.length ? storedIds : ['city_01', 'city_03']
+  } catch {
+    return ['city_01', 'city_03']
+  }
+}
+
+watch(
+  favoriteCityIds,
+  (nextIds) => {
+    try {
+      window.localStorage.setItem('skala-vue:weather-favorites', JSON.stringify(nextIds))
+    } catch {
+      // localStorage가 차단된 환경에서도 화면의 즐겨찾기는 계속 동작합니다.
+    }
+  },
+  { deep: true },
+)
+
+watch(selectedCityId, (nextId, previousId) => {
+  if (nextId !== previousId) {
+    alertDismissed.value = false
+  }
+})
 
 function selectCity(city) {
   selectedCityId.value = city.id
@@ -322,7 +409,9 @@ function closeDetails() {
 function handleQueryUpdate(query) {
   cityQuery.value = query
   const normalizedQuery = query.trim().toLowerCase()
-  const firstMatch = weatherList.value.find((city) => `${city.name} ${city.region}`.toLowerCase().includes(normalizedQuery))
+  const firstMatch = weatherList.value.find((city) =>
+    `${city.name} ${city.region}`.toLowerCase().includes(normalizedQuery),
+  )
 
   if (firstMatch) {
     selectCity(firstMatch)
@@ -331,6 +420,14 @@ function handleQueryUpdate(query) {
 
 function clearSearch() {
   cityQuery.value = ''
+}
+
+function toggleFavoritesOnly() {
+  showFavoritesOnly.value = !showFavoritesOnly.value
+}
+
+function dismissAlert() {
+  alertDismissed.value = true
 }
 
 function isFavorite(cityId) {
@@ -370,8 +467,22 @@ function refreshWeather() {
       <SearchBar :query="cityQuery" @update-query="handleQueryUpdate" @clear-query="clearSearch" />
       <div class="weather-dashboard-toolbar-meta">
         <span><i class="weather-live-dot" aria-hidden="true"></i> Updated {{ lastUpdated }}</span>
-        <button type="button" class="weather-refresh-button" :class="{ refreshing: isRefreshing }" @click="refreshWeather">
+        <button
+          type="button"
+          class="weather-refresh-button"
+          :class="{ refreshing: isRefreshing }"
+          @click="refreshWeather"
+        >
           <span aria-hidden="true">↻</span> Refresh
+        </button>
+        <button
+          type="button"
+          class="weather-filter-toggle"
+          :class="{ active: showFavoritesOnly }"
+          :aria-pressed="showFavoritesOnly"
+          @click="toggleFavoritesOnly"
+        >
+          <span aria-hidden="true">★</span> Favorites {{ favoriteCitiesCount }}
         </button>
       </div>
     </div>
@@ -385,9 +496,20 @@ function refreshWeather() {
         :class="{ active: city.id === selectedCity.id }"
         @click="selectCity(city)"
       >
-        <span aria-hidden="true">{{ city.icon }}</span>{{ city.name }}
+        <span aria-hidden="true">{{ city.icon }}</span
+        >{{ city.name }}
       </button>
     </div>
+
+    <aside v-if="!alertDismissed" class="weather-alert-card" :class="`tone-${weatherAlert.tone}`">
+      <span class="weather-alert-icon" aria-hidden="true">{{ weatherAlert.icon }}</span>
+      <div class="weather-alert-copy">
+        <strong>{{ weatherAlert.title }}</strong>
+        <p>{{ weatherAlert.message }}</p>
+      </div>
+      <span class="weather-alert-action">{{ weatherAlert.action }}</span>
+      <button type="button" class="weather-alert-dismiss" aria-label="알림 닫기" @click="dismissAlert">×</button>
+    </aside>
 
     <div class="weather-dashboard-grid">
       <WeatherCard
@@ -415,29 +537,48 @@ function refreshWeather() {
         </div>
         <p v-else class="weather-location-empty">No places match “{{ cityQuery }}”. Try another search.</p>
 
-        <div class="weather-location-footer"><span class="weather-location-footer-dot"></span> Local mock data · No API key required</div>
+        <div class="weather-location-footer">
+          <span class="weather-location-footer-dot"></span> Favorites are saved locally ·
+          {{ favoriteCitiesCount }} saved
+        </div>
       </BaseDashboardCard>
     </div>
 
     <div class="weather-stat-grid">
       <article v-for="metric in selectedMetrics" :key="metric.label" class="weather-stat-card">
         <span class="weather-stat-icon" :class="`tone-${metric.tone}`" aria-hidden="true">{{ metric.icon }}</span>
-        <div><span>{{ metric.label }}</span><strong>{{ metric.value }}</strong></div>
+        <div>
+          <span>{{ metric.label }}</span
+          ><strong>{{ metric.value }}</strong>
+        </div>
       </article>
     </div>
 
     <div class="weather-bottom-grid">
       <BaseDashboardCard class="weather-planner-card" eyebrow="DAY PLANNER" title="Make the most of today">
         <template #meta><span aria-hidden="true">✦</span></template>
-        <p>{{ selectedCity.name }} is looking {{ selectedCity.temp >= 25 ? 'warm and bright' : 'cool and comfortable' }}. {{ selectedCity.description }}</p>
-        <div class="weather-planner-tags"><span>☕ Morning walk</span><span>◷ Best window {{ selectedCity.bestWindow }}</span><span>Rain {{ selectedCity.precipitation }}</span><span>UV {{ selectedCity.uvIndex }}</span></div>
+        <p>
+          {{ selectedCity.name }} is looking {{ selectedCity.temp >= 25 ? 'warm and bright' : 'cool and comfortable' }}.
+          {{ selectedCity.description }}
+        </p>
+        <div class="weather-planner-tags">
+          <span>☕ Morning walk</span><span>◷ Best window {{ selectedCity.bestWindow }}</span
+          ><span>Rain {{ selectedCity.precipitation }}</span
+          ><span>UV {{ selectedCity.uvIndex }}</span>
+        </div>
         <p class="weather-daylight">Sunrise {{ selectedCity.sunrise }} · Sunset {{ selectedCity.sunset }}</p>
       </BaseDashboardCard>
 
       <BaseDashboardCard class="weather-snapshot-card" eyebrow="TODAY’S SNAPSHOT" title="At a glance">
-        <template #meta><span class="weather-snapshot-score">{{ selectedCity.comfortScore }}<small>/10</small></span></template>
-        <div class="weather-snapshot-bar"><span :style="{ width: `${Number(selectedCity.comfortScore) * 10}%` }"></span></div>
-        <div class="weather-snapshot-footer"><span>Comfort index</span><strong>{{ selectedCity.comfortLabel }}</strong></div>
+        <template #meta
+          ><span class="weather-snapshot-score">{{ selectedCity.comfortScore }}<small>/10</small></span></template
+        >
+        <div class="weather-snapshot-bar">
+          <span :style="{ width: `${Number(selectedCity.comfortScore) * 10}%` }"></span>
+        </div>
+        <div class="weather-snapshot-footer">
+          <span>Comfort index</span><strong>{{ selectedCity.comfortLabel }}</strong>
+        </div>
       </BaseDashboardCard>
     </div>
 
@@ -448,7 +589,26 @@ function refreshWeather() {
         <p class="weather-card-label">CITY DETAIL</p>
         <h3 id="weather-detail-title">{{ detailCity.name }} weather profile</h3>
         <p class="weather-modal-description">{{ detailCity.description }}</p>
-        <div class="weather-modal-stats"><span><small>Current</small><strong>{{ detailCity.temp }}°</strong></span><span><small>High / low</small><strong>{{ detailCity.high }}° / {{ detailCity.low }}°</strong></span><span><small>Status</small><strong>{{ detailCity.status }}</strong></span><span><small>Air quality</small><strong>{{ detailCity.airQuality }}</strong></span><span><small>UV index</small><strong>{{ detailCity.uvIndex }}</strong></span><span><small>Sunrise / sunset</small><strong>{{ detailCity.sunrise }} / {{ detailCity.sunset }}</strong></span></div>
+        <div class="weather-modal-stats">
+          <span
+            ><small>Current</small
+            ><strong>{{ displayTemperature(detailCity.temp) }}{{ configStore.unitSymbol }}</strong></span
+          ><span
+            ><small>High / low</small
+            ><strong
+              >{{ displayTemperature(detailCity.high) }}{{ configStore.unitSymbol }} /
+              {{ displayTemperature(detailCity.low) }}{{ configStore.unitSymbol }}</strong
+            ></span
+          ><span
+            ><small>Status</small><strong>{{ detailCity.status }}</strong></span
+          ><span
+            ><small>Air quality</small><strong>{{ detailCity.airQuality }}</strong></span
+          ><span
+            ><small>UV index</small><strong>{{ detailCity.uvIndex }}</strong></span
+          ><span
+            ><small>Sunrise / sunset</small><strong>{{ detailCity.sunrise }} / {{ detailCity.sunset }}</strong></span
+          >
+        </div>
         <button type="button" class="weather-modal-primary" @click="closeDetails">Done</button>
       </section>
     </div>
@@ -496,6 +656,7 @@ function refreshWeather() {
 .weather-dashboard-head,
 .weather-dashboard-toolbar,
 .weather-city-chips,
+.weather-alert-card,
 .weather-dashboard-grid,
 .weather-stat-grid,
 .weather-bottom-grid {
@@ -607,7 +768,10 @@ function refreshWeather() {
   font-size: 11px;
   font-weight: 700;
   cursor: pointer;
-  transition: border-color 160ms ease, color 160ms ease, transform 160ms ease;
+  transition:
+    border-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
 }
 
 .weather-refresh-button:hover {
@@ -626,8 +790,33 @@ function refreshWeather() {
   animation: weather-spin 500ms linear infinite;
 }
 
+.weather-filter-toggle {
+  min-height: 32px;
+  padding: 6px 10px;
+  border: 1px solid var(--weather-line);
+  border-radius: 8px;
+  color: #5d6681;
+  background: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    color 160ms ease,
+    background-color 160ms ease;
+}
+
+.weather-filter-toggle:hover,
+.weather-filter-toggle.active {
+  border-color: #b9bcf3;
+  color: var(--weather-accent-dark);
+  background: #eeefff;
+}
+
 @keyframes weather-spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .weather-city-chips {
@@ -653,7 +842,10 @@ function refreshWeather() {
   font-size: 11px;
   font-weight: 700;
   cursor: pointer;
-  transition: color 160ms ease, border-color 160ms ease, background-color 160ms ease;
+  transition:
+    color 160ms ease,
+    border-color 160ms ease,
+    background-color 160ms ease;
 }
 
 .weather-city-chip span {
@@ -665,6 +857,99 @@ function refreshWeather() {
   border-color: #b9bcf3;
   color: #4f56d2;
   background: #eeefff;
+}
+
+.weather-alert-card {
+  margin-top: 16px;
+  padding: 13px 14px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 11px;
+  border: 1px solid #dce8e2;
+  border-radius: 12px;
+  background: #f4fbf7;
+}
+
+.weather-alert-card.tone-rain {
+  border-color: #dbe5f6;
+  background: #f3f7ff;
+}
+
+.weather-alert-card.tone-heat {
+  border-color: #f3e4c7;
+  background: #fff9ed;
+}
+
+.weather-alert-card.tone-uv {
+  border-color: #f0d9e8;
+  background: #fff4fa;
+}
+
+.weather-alert-icon {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.68);
+  font-size: 20px;
+}
+
+.weather-alert-copy {
+  min-width: 0;
+}
+
+.weather-alert-copy strong {
+  color: #2d6350;
+  font-size: 12px;
+}
+
+.weather-alert-card.tone-rain .weather-alert-copy strong {
+  color: #3f65a0;
+}
+.weather-alert-card.tone-heat .weather-alert-copy strong {
+  color: #9a6a2b;
+}
+.weather-alert-card.tone-uv .weather-alert-copy strong {
+  color: #a45079;
+}
+
+.weather-alert-copy p {
+  overflow: hidden;
+  margin: 4px 0 0;
+  color: #71818a;
+  font-size: 11px;
+  line-height: 1.45;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.weather-alert-action {
+  padding: 5px 8px;
+  border-radius: 999px;
+  color: #287550;
+  background: rgba(66, 184, 131, 0.12);
+  font-size: 10px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.weather-alert-dismiss {
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 7px;
+  color: #8b9b9a;
+  background: transparent;
+  font-size: 17px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.weather-alert-dismiss:hover {
+  color: #526a61;
+  background: rgba(255, 255, 255, 0.75);
 }
 
 .weather-dashboard-grid {
@@ -703,12 +988,30 @@ function refreshWeather() {
   font-weight: 800;
 }
 
-.weather-stat-icon.tone-mint { color: #42a579; background: #e6f8ef; }
-.weather-stat-icon.tone-blue { color: #4e83d2; background: #eaf2ff; }
-.weather-stat-icon.tone-lavender { color: #7862cb; background: #f0ecff; }
-.weather-stat-icon.tone-sand { color: #bd8a48; background: #fff4df; }
-.weather-stat-icon.tone-sky { color: #3f8eb5; background: #e8f6fb; }
-.weather-stat-icon.tone-rose { color: #c25e85; background: #fff0f5; }
+.weather-stat-icon.tone-mint {
+  color: #42a579;
+  background: #e6f8ef;
+}
+.weather-stat-icon.tone-blue {
+  color: #4e83d2;
+  background: #eaf2ff;
+}
+.weather-stat-icon.tone-lavender {
+  color: #7862cb;
+  background: #f0ecff;
+}
+.weather-stat-icon.tone-sand {
+  color: #bd8a48;
+  background: #fff4df;
+}
+.weather-stat-icon.tone-sky {
+  color: #3f8eb5;
+  background: #e8f6fb;
+}
+.weather-stat-icon.tone-rose {
+  color: #c25e85;
+  background: #fff0f5;
+}
 
 .weather-stat-card > div {
   min-width: 0;
@@ -947,6 +1250,19 @@ function refreshWeather() {
 
   .weather-stat-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .weather-alert-card {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .weather-alert-action {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  .weather-alert-copy p {
+    white-space: normal;
   }
 
   .weather-modal-stats {

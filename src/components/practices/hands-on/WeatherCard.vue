@@ -1,4 +1,7 @@
 <script setup>
+import { useConfigStore } from '@/stores/configStore.js'
+import { toDisplayTemperature } from '@/utils/temperature.js'
+
 const props = defineProps({
   city: {
     type: Object,
@@ -19,6 +22,11 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['select-card', 'click-detail', 'toggle-favorite'])
+const configStore = useConfigStore()
+
+function displayTemperature(value) {
+  return toDisplayTemperature(value, configStore.unit)
+}
 
 function selectCard() {
   emit('select-card', props.city)
@@ -35,10 +43,7 @@ function toggleFavorite(event) {
 </script>
 
 <template>
-  <article
-    v-if="props.variant === 'current'"
-    class="weather-current-card"
-  >
+  <article v-if="props.variant === 'current'" class="weather-current-card">
     <div class="weather-current-topline">
       <div>
         <p class="weather-card-label">CURRENT CONDITIONS</p>
@@ -60,21 +65,33 @@ function toggleFavorite(event) {
     <div class="weather-current-reading">
       <span class="weather-current-icon" aria-hidden="true">{{ props.city.icon }}</span>
       <div>
-        <strong>{{ props.city.temp }}<sup>°</sup></strong>
+        <strong
+          >{{ displayTemperature(props.city.temp) }}<sup>{{ configStore.unitSymbol }}</sup></strong
+        >
         <span v-if="props.city.temp >= 25" class="weather-condition-pill warm">Warm &amp; bright</span>
         <span v-else class="weather-condition-pill cool">Cool &amp; calm</span>
       </div>
     </div>
 
     <p class="weather-current-description">{{ props.city.description }}</p>
-    <div class="weather-high-low"><span>Feels like <strong>{{ props.city.feelsLike }}°</strong></span><span>H <strong>{{ props.city.high }}°</strong></span><span>L <strong>{{ props.city.low }}°</strong></span><span>Rain <strong>{{ props.city.precipitation }}</strong></span></div>
+    <div class="weather-high-low">
+      <span
+        >Feels like <strong>{{ displayTemperature(props.city.feelsLike) }}{{ configStore.unitSymbol }}</strong></span
+      ><span
+        >H <strong>{{ displayTemperature(props.city.high) }}{{ configStore.unitSymbol }}</strong></span
+      ><span
+        >L <strong>{{ displayTemperature(props.city.low) }}{{ configStore.unitSymbol }}</strong></span
+      ><span
+        >Rain <strong>{{ props.city.precipitation }}</strong></span
+      >
+    </div>
 
     <div class="weather-hourly-heading"><span>Next 6 hours</span><small>Local time</small></div>
     <div class="weather-hourly-list">
       <div v-for="hour in props.city.forecast" :key="`${props.city.id}-${hour.day}`" class="weather-hourly-item">
         <span>{{ hour.day }}</span>
         <span class="weather-hourly-icon" aria-hidden="true">{{ hour.icon }}</span>
-        <strong>{{ hour.temp }}°</strong>
+        <strong>{{ displayTemperature(hour.temp) }}{{ configStore.unitSymbol }}</strong>
         <small>{{ hour.rain }}% rain</small>
       </div>
     </div>
@@ -90,15 +107,23 @@ function toggleFavorite(event) {
     @keydown.space.prevent="selectCard"
   >
     <span class="weather-location-icon" aria-hidden="true">{{ props.city.icon }}</span>
-    <div class="weather-location-name"><strong>{{ props.city.name }}</strong><span>{{ props.city.status }} · {{ props.city.low }}° / {{ props.city.high }}°</span></div>
-    <strong class="weather-location-temp">{{ props.city.temp }}°</strong>
+    <div class="weather-location-name">
+      <strong>{{ props.city.name }}</strong
+      ><span
+        >{{ props.city.status }} · {{ displayTemperature(props.city.low) }}{{ configStore.unitSymbol }} /
+        {{ displayTemperature(props.city.high) }}{{ configStore.unitSymbol }}</span
+      >
+    </div>
+    <strong class="weather-location-temp">{{ displayTemperature(props.city.temp) }}{{ configStore.unitSymbol }}</strong>
     <button
       type="button"
       class="weather-location-favorite"
       :class="{ active: props.favorite }"
       :aria-label="props.favorite ? `${props.city.name} 즐겨찾기 해제` : `${props.city.name} 즐겨찾기 추가`"
       @click="toggleFavorite"
-    >{{ props.favorite ? '★' : '☆' }}</button>
+    >
+      {{ props.favorite ? '★' : '☆' }}
+    </button>
     <button type="button" class="weather-location-action" @click.stop="showDetail">View</button>
   </article>
 </template>
@@ -123,7 +148,9 @@ function toggleFavorite(event) {
   height: 220px;
   border: 1px solid rgba(255, 255, 255, 0.13);
   border-radius: 50%;
-  box-shadow: 0 0 0 20px rgba(255, 255, 255, 0.04), 0 0 0 42px rgba(255, 255, 255, 0.03);
+  box-shadow:
+    0 0 0 20px rgba(255, 255, 255, 0.04),
+    0 0 0 42px rgba(255, 255, 255, 0.03);
   content: '';
   pointer-events: none;
 }
@@ -209,8 +236,12 @@ function toggleFavorite(event) {
   font-weight: 800;
 }
 
-.weather-condition-pill.warm { color: #fff1bf; }
-.weather-condition-pill.cool { color: #d9e9ff; }
+.weather-condition-pill.warm {
+  color: #fff1bf;
+}
+.weather-condition-pill.cool {
+  color: #d9e9ff;
+}
 
 .weather-current-description {
   max-width: 42ch;
@@ -229,7 +260,9 @@ function toggleFavorite(event) {
   font-size: 11px;
 }
 
-.weather-high-low strong { color: rgba(255, 255, 255, 0.92); }
+.weather-high-low strong {
+  color: rgba(255, 255, 255, 0.92);
+}
 
 .weather-hourly-heading {
   margin-top: 27px;
@@ -273,9 +306,18 @@ function toggleFavorite(event) {
   background: rgba(255, 255, 255, 0.17);
 }
 
-.weather-hourly-icon { font-size: 17px; }
-.weather-hourly-item strong { color: #fff; font-size: 12px; }
-.weather-hourly-item small { color: rgba(255, 255, 255, 0.52); font-size: 8px; white-space: nowrap; }
+.weather-hourly-icon {
+  font-size: 17px;
+}
+.weather-hourly-item strong {
+  color: #fff;
+  font-size: 12px;
+}
+.weather-hourly-item small {
+  color: rgba(255, 255, 255, 0.52);
+  font-size: 8px;
+  white-space: nowrap;
+}
 
 .weather-location-list {
   margin-top: 17px;
@@ -293,7 +335,9 @@ function toggleFavorite(event) {
   border: 1px solid transparent;
   border-radius: 11px;
   cursor: pointer;
-  transition: border-color 160ms ease, background-color 160ms ease;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease;
 }
 
 .weather-location-row:hover,
@@ -320,9 +364,22 @@ function toggleFavorite(event) {
   gap: 3px;
 }
 
-.weather-location-name strong { color: var(--weather-ink, #202438); font-size: 12px; }
-.weather-location-name span { overflow: hidden; color: #9aa0b1; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
-.weather-location-temp { color: #4b526a; font-size: 15px; font-weight: 700; }
+.weather-location-name strong {
+  color: var(--weather-ink, #202438);
+  font-size: 12px;
+}
+.weather-location-name span {
+  overflow: hidden;
+  color: #9aa0b1;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.weather-location-temp {
+  color: #4b526a;
+  font-size: 15px;
+  font-weight: 700;
+}
 
 .weather-location-favorite {
   padding: 0;
@@ -333,7 +390,9 @@ function toggleFavorite(event) {
   cursor: pointer;
 }
 
-.weather-location-favorite.active { color: #e8b94b; }
+.weather-location-favorite.active {
+  color: #e8b94b;
+}
 
 .weather-location-action {
   min-height: 24px;
@@ -348,12 +407,27 @@ function toggleFavorite(event) {
 }
 
 @media (max-width: 480px) {
-  .weather-current-card { padding: 17px; }
-  .weather-current-reading strong { font-size: 53px; }
-  .weather-current-icon { font-size: 42px; }
-  .weather-hourly-list { gap: 3px; }
-  .weather-hourly-item { padding-inline: 2px; }
-  .weather-location-row { grid-template-columns: 30px minmax(0, 1fr) auto 20px; }
-  .weather-location-action { grid-column: 2 / -1; justify-self: start; }
+  .weather-current-card {
+    padding: 17px;
+  }
+  .weather-current-reading strong {
+    font-size: 53px;
+  }
+  .weather-current-icon {
+    font-size: 42px;
+  }
+  .weather-hourly-list {
+    gap: 3px;
+  }
+  .weather-hourly-item {
+    padding-inline: 2px;
+  }
+  .weather-location-row {
+    grid-template-columns: 30px minmax(0, 1fr) auto 20px;
+  }
+  .weather-location-action {
+    grid-column: 2 / -1;
+    justify-self: start;
+  }
 }
 </style>
