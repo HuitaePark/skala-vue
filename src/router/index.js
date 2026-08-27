@@ -11,7 +11,9 @@ import HandsOnView from '@/views/HandsOnView.vue'
 import HomeView from '@/views/HomeView.vue'
 import LifecycleChallengeView from '@/views/LifecycleChallengeView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
+import PiniaChallengeView from '@/views/PiniaChallengeView.vue'
 import PropsEmitsChallengeView from '@/views/PropsEmitsChallengeView.vue'
+import ViteQualityView from '@/views/ViteQualityView.vue'
 import WeatherComponentsChallengeView from '@/views/WeatherComponentsChallengeView.vue'
 
 const routes = [
@@ -49,6 +51,26 @@ const routes = [
     path: '/components/weather',
     name: 'components-weather',
     component: WeatherComponentsChallengeView,
+  },
+  {
+    path: '/pinia',
+    name: 'pinia-challenge',
+    component: PiniaChallengeView,
+  },
+  {
+    path: '/axios',
+    name: 'axios-challenge',
+    component: () => import('@/views/AxiosChallengeView.vue'),
+  },
+  {
+    path: '/ui-library',
+    name: 'ui-library-challenge',
+    component: () => import('@/views/UiLibraryChallengeView.vue'),
+  },
+  {
+    path: '/vite',
+    name: 'vite-quality',
+    component: ViteQualityView,
   },
   {
     path: '/directives',

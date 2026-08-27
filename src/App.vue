@@ -5,7 +5,15 @@ const route = useRoute()
 </script>
 
 <template>
-  <div :class="['app-shell', { 'app-shell--weather': route.name === 'hands-on-weather', 'app-shell--weather-router': ['weather-home', 'weather-detail', 'weather-about'].includes(route.name) }]">
+  <div
+    :class="[
+      'app-shell',
+      {
+        'app-shell--weather': route.name === 'hands-on-weather',
+        'app-shell--weather-router': ['weather-home', 'weather-detail', 'weather-about'].includes(route.name),
+      },
+    ]"
+  >
     <header class="site-header">
       <RouterLink class="brand" to="/">
         <span class="brand-mark" aria-hidden="true">V</span>
@@ -23,6 +31,10 @@ const route = useRoute()
         <RouterLink to="/composition/lifecycle">Lifecycle</RouterLink>
         <RouterLink to="/components/props">Props</RouterLink>
         <RouterLink to="/components/weather">Weather Components</RouterLink>
+        <RouterLink to="/pinia">Pinia Store</RouterLink>
+        <RouterLink to="/axios">Axios API</RouterLink>
+        <RouterLink to="/ui-library">UI Library</RouterLink>
+        <RouterLink to="/vite">Vite Quality</RouterLink>
         <RouterLink to="/events">Event Handling</RouterLink>
         <RouterLink to="/forms">Form &amp; Style</RouterLink>
         <RouterLink to="/hands-on/weather">Weather</RouterLink>
@@ -32,7 +44,15 @@ const route = useRoute()
       </nav>
     </header>
 
-    <main :class="['app-main', { 'app-main--weather': route.name === 'hands-on-weather', 'app-main--weather-router': ['weather-home', 'weather-detail', 'weather-about'].includes(route.name) }]">
+    <main
+      :class="[
+        'app-main',
+        {
+          'app-main--weather': route.name === 'hands-on-weather',
+          'app-main--weather-router': ['weather-home', 'weather-detail', 'weather-about'].includes(route.name),
+        },
+      ]"
+    >
       <RouterView />
     </main>
 
