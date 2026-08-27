@@ -10,14 +10,15 @@ import WeatherRouterShell from '@/components/WeatherRouterShell.vue'
       <p class="weather-about-lead">SKALA-VUE의 Weather Router 핸즈온 화면입니다.</p>
 
       <article class="weather-about-card">
-        <h2>라우팅으로 연결된 날씨 서비스</h2>
+        <h2>PDF 과제를 누적한 최종 날씨 서비스</h2>
         <ul>
-          <li>Vue 3 Composition API 기반의 Mock Weather Dashboard</li>
-          <li>도시 상세보기 버튼의 Programmatic Navigation</li>
-          <li><code>/weather/:cityId</code> 동적 경로와 Mock Data 매칭</li>
-          <li>Lazy Loading과 Catch-all Route를 포함한 Vue Router 구성</li>
+          <li>Composition API 기반 검색·선택·즐겨찾기와 기상 알림</li>
+          <li>Props·Emits·Slot으로 분리한 Weather 컴포넌트 구조</li>
+          <li><code>/weather/:cityId</code> 동적 상세 경로와 Programmatic Navigation</li>
+          <li>Pinia 온도 단위 동기화와 Axios OpenWeather 실시간 데이터</li>
+          <li>API 실패 시 Mock fallback, 환경변수와 GitHub Pages 배포 구성</li>
         </ul>
-        <RouterLink class="weather-about-primary" to="/weather">대시보드로 돌아가기</RouterLink>
+        <RouterLink class="weather-about-primary" to="/hands-on/weather">최종 대시보드로 돌아가기</RouterLink>
       </article>
     </section>
   </WeatherRouterShell>

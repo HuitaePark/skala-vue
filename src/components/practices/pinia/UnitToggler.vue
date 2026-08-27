@@ -40,7 +40,7 @@ const configStore = useConfigStore()
 }
 
 .unit-toggler-button {
-  min-height: 25px;
+  min-height: 32px;
   padding: 4px 8px;
   border: 0;
   border-radius: 6px;

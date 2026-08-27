@@ -29,7 +29,7 @@ npm run dev
 - `/vite`: PDF 250~274페이지 ESLint·Prettier·env·Build·Deployment 실습
 - `/events`: PDF 93~105페이지 Vue Event Handling 실습
 - `/forms`: PDF 106~115페이지 Vue Form Handling·Style 실습
-- `/hands-on/weather`: PDF 116쪽 서비스형 Weather Dashboard
+- `/hands-on/weather`: PDF 116~274쪽 Weather Hands-on 최종 통합 대시보드
 - `/directives`: PDF 72~92페이지 Vue Directive 실습
 - `/about`: HMR 확인용 화면
 
@@ -39,8 +39,12 @@ npm run dev
 
 ## 환경변수
 
-`.env.example`을 참고해 `.env.local`을 만들고, 실시간 OpenWeatherMap 요청이 필요할 때만
-`VITE_OPENWEATHER_API_KEY`를 입력합니다. `.env.local`은 Git에 올리지 않습니다.
+프로젝트 루트에서 `.env.example`을 복사해 `.env.local`을 만들고 OpenWeather API 키를 입력합니다.
+`.env.local`은 Git에 올리지 않으며, 값을 바꾼 뒤에는 개발 서버를 다시 실행합니다.
+
+```dotenv
+VITE_OPENWEATHER_API_KEY=발급받은_API_키
+```
 
 ```bash
 npm run lint
@@ -55,4 +59,5 @@ npm run build:staging
 저장소 Settings → Pages에서 Source를 **GitHub Actions**로 선택하면 됩니다.
 
 - 배포 주소: `https://huitaepark.github.io/skala-vue/`
-- 실시간 날씨를 배포판에서도 사용하려면 Actions Secret에 `VITE_OPENWEATHER_API_KEY`를 추가합니다.
+- 실시간 날씨를 배포판에서도 사용하려면 Settings → Secrets and variables → Actions에서
+  `VITE_OPENWEATHER_API_KEY` 이름의 Repository secret을 추가합니다.

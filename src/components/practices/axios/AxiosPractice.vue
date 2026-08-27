@@ -2,8 +2,7 @@
 import { computed, ref } from 'vue'
 import {
   fetchJsonPlaceholderPosts,
-  fetchOpenWeatherByCity,
-  fetchOpenWeatherForecast,
+  fetchOpenWeatherBundle,
   hasOpenWeatherApiKey,
   toForecastSummary,
   toWeatherSummary,
@@ -62,10 +61,7 @@ async function loadWeather() {
   }
 
   try {
-    const [currentData, forecastData] = await Promise.all([
-      fetchOpenWeatherByCity(cityName.value),
-      fetchOpenWeatherForecast(cityName.value),
-    ])
+    const { currentData, forecastData } = await fetchOpenWeatherBundle(cityName.value)
     weather.value = toWeatherSummary(currentData)
     forecast.value = toForecastSummary(forecastData)
     sourceLabel.value = 'OpenWeatherMap live API'

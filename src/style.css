@@ -81,7 +81,6 @@ code {
   flex-direction: column;
 }
 
-.site-header,
 .app-main,
 .site-footer {
   width: min(1120px, calc(100% - 40px));
@@ -91,14 +90,17 @@ code {
 .site-header {
   position: relative;
   z-index: 20;
+  width: 100%;
   min-height: 80px;
-  padding: 14px 0;
+  margin: 0;
+  padding: 14px max(20px, calc((100vw - 1120px) / 2));
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 24px;
   border-bottom: 1px solid var(--line);
   background: var(--paper);
+  box-shadow: 0 8px 24px rgba(34, 55, 65, 0.04);
 }
 
 .brand {
@@ -1646,7 +1648,6 @@ fieldset.form-field {
   color: #a1a7b7;
 }
 
-.weather-dashboard-search button,
 .weather-refresh-button,
 .weather-city-chip,
 .weather-favorite-button,
@@ -1656,16 +1657,6 @@ fieldset.form-field {
 .weather-modal-primary {
   border: 0;
   cursor: pointer;
-}
-
-.weather-dashboard-search button {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  color: #747b91;
-  background: #f0f1f6;
-  font-size: 17px;
-  line-height: 1;
 }
 
 .weather-dashboard-toolbar-meta {
@@ -3487,14 +3478,14 @@ fieldset.form-field {
 }
 
 @media (max-width: 640px) {
-  .site-header,
   .app-main,
   .site-footer {
     width: min(100% - 28px, 1120px);
   }
 
   .site-header {
-    padding: 14px 0;
+    width: 100%;
+    padding: 14px;
     align-items: flex-start;
     flex-direction: column;
   }
@@ -3512,7 +3503,11 @@ fieldset.form-field {
 
   .nav-menu-trigger {
     width: 100%;
-    justify-content: space-between;
+    justify-content: flex-start;
+  }
+
+  .nav-menu-trigger .nav-chevron {
+    margin-left: auto;
   }
 
   .nav-menu-panel,

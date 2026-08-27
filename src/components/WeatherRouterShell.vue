@@ -5,18 +5,18 @@ import UnitToggler from '@/components/practices/pinia/UnitToggler.vue'
 <template>
   <div class="weather-router-page">
     <header class="weather-router-header">
-      <RouterLink class="weather-router-brand" to="/weather">
+      <RouterLink class="weather-router-brand" to="/hands-on/weather">
         <span class="weather-router-brand-icon" aria-hidden="true">🌤️</span>
         <span>
           <strong>Weather Desk</strong>
-          <small>Vue Router hands-on</small>
+          <small>Final Vue hands-on</small>
         </span>
       </RouterLink>
 
       <div class="weather-router-actions">
         <UnitToggler />
         <nav class="weather-router-nav" aria-label="날씨 메뉴">
-          <RouterLink to="/weather">날씨 대시보드</RouterLink>
+          <RouterLink to="/hands-on/weather">최종 대시보드</RouterLink>
           <RouterLink to="/weather/about">서비스 소개</RouterLink>
         </nav>
       </div>

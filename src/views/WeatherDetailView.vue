@@ -1,28 +1,56 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed, watch } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useRoute, useRouter } from 'vue-router'
 import WeatherRouterShell from '@/components/WeatherRouterShell.vue'
-import weatherRouteData from '@/data/weatherRouteData.js'
 import { useConfigStore } from '@/stores/configStore.js'
+import { useWeatherStore } from '@/stores/weatherStore.js'
 import { toDisplayTemperature } from '@/utils/temperature.js'
 
 const route = useRoute()
-const city = ref(null)
+const router = useRouter()
 const configStore = useConfigStore()
+const weatherStore = useWeatherStore()
+const { apiKeyConfigured, errorMessage, isLoading } = storeToRefs(weatherStore)
+const city = computed(() => weatherStore.cityById(String(route.params.cityId)))
 
 function displayTemperature(value) {
   return toDisplayTemperature(value, configStore.unit)
 }
 
-function loadCity(cityId) {
-  city.value = weatherRouteData.find((item) => item.id === cityId) ?? null
+async function synchronizeCity(cityId, routeQuery) {
+  const normalizedCityId = String(cityId)
+  const existingCity = weatherStore.cityById(normalizedCityId)
+
+  if (existingCity) {
+    weatherStore.selectCity(existingCity)
+  }
+
+  if (!apiKeyConfigured.value || existingCity?.dataSource === 'live') return
+
+  const queryFromRoute = typeof routeQuery === 'string' ? routeQuery.trim() : ''
+  const apiQuery = queryFromRoute || existingCity?.apiQuery || ''
+
+  if (!apiQuery) return
+
+  const result = await weatherStore.loadLiveWeather(apiQuery)
+
+  if (result.ok && result.city.id !== normalizedCityId) {
+    await router.replace({
+      name: 'weather-detail',
+      params: { cityId: result.city.id },
+      query: { q: result.city.apiQuery },
+    })
+  }
 }
 
-onMounted(() => {
-  loadCity(route.params.cityId)
-})
-
-watch(() => route.params.cityId, loadCity)
+watch(
+  [() => route.params.cityId, () => route.query.q],
+  ([cityId, routeQuery]) => {
+    void synchronizeCity(cityId, routeQuery)
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
@@ -33,13 +61,19 @@ watch(() => route.params.cityId, loadCity)
           <p class="weather-router-kicker">Dynamic Route · /weather/:cityId</p>
           <h1>지역별 상세 기상 관측 정보</h1>
         </div>
-        <RouterLink class="weather-detail-back" to="/weather">← 메인 대시보드</RouterLink>
+        <RouterLink class="weather-detail-back" to="/hands-on/weather">← 최종 대시보드</RouterLink>
       </div>
+
+      <p v-if="isLoading" class="weather-detail-sync-status" role="status">실시간 관측값을 확인하는 중입니다.</p>
+      <p v-else-if="errorMessage && city?.dataSource !== 'live'" class="weather-detail-sync-status error" role="status">
+        {{ errorMessage }} Mock 데이터를 계속 표시합니다.
+      </p>
 
       <article v-if="city" class="weather-detail-card">
         <div class="weather-detail-card-topline">
           <div>
-            <span class="weather-detail-icon" aria-hidden="true">{{ city.icon }}</span>
+            <img v-if="city.iconUrl" class="weather-detail-icon-image" :src="city.iconUrl" :alt="city.status" />
+            <span v-else class="weather-detail-icon" aria-hidden="true">{{ city.icon }}</span>
             <p class="weather-detail-label">{{ city.region }}</p>
             <h2>
               {{ city.name }} <small>{{ city.status }}</small>
@@ -86,27 +120,28 @@ watch(() => route.params.cityId, loadCity)
         <div class="weather-detail-forecast">
           <div class="weather-detail-section-heading">
             <h3>시간대별 예보</h3>
-            <span>Mock Data</span>
+            <span>{{ city.dataSource === 'live' ? 'OpenWeather Live' : 'Mock Data' }}</span>
           </div>
           <div class="weather-detail-forecast-list">
-            <div v-for="item in city.forecast" :key="`${city.id}-${item.time}`" class="weather-detail-forecast-item">
-              <span>{{ item.time }}</span>
-              <strong aria-hidden="true">{{ item.icon }}</strong>
+            <div v-for="item in city.forecast" :key="`${city.id}-${item.day}`" class="weather-detail-forecast-item">
+              <span>{{ item.day }}</span>
+              <img v-if="item.iconUrl" :src="item.iconUrl" :alt="item.status" />
+              <strong v-else aria-hidden="true">{{ item.icon }}</strong>
               <b>{{ displayTemperature(item.temp) }}{{ configStore.unitSymbol }}</b>
-              <small>강수확률 {{ item.rain }}</small>
+              <small>강수확률 {{ item.rain }}%</small>
             </div>
           </div>
         </div>
       </article>
 
-      <article v-else class="weather-detail-not-found">
+      <article v-else-if="!isLoading" class="weather-detail-not-found">
         <span aria-hidden="true">🔎</span>
         <h2>도시 정보를 찾을 수 없습니다.</h2>
         <p>
           <code>{{ route.params.cityId }}</code
-          >에 해당하는 Mock Data가 없습니다.
+          >에 해당하는 저장된 도시 정보가 없습니다.
         </p>
-        <RouterLink class="weather-detail-primary" to="/weather">날씨 메인으로 이동</RouterLink>
+        <RouterLink class="weather-detail-primary" to="/hands-on/weather">날씨 메인으로 이동</RouterLink>
       </article>
     </section>
   </WeatherRouterShell>
@@ -140,6 +175,22 @@ watch(() => route.params.cityId, loadCity)
   color: #263944;
   font-size: clamp(24px, 4vw, 35px);
   letter-spacing: -0.045em;
+}
+
+.weather-detail-sync-status {
+  margin: 0 0 12px;
+  padding: 9px 11px;
+  border: 1px solid #d5eadf;
+  border-radius: 9px;
+  color: #287550;
+  background: #f2fbf6;
+  font-size: 11px;
+}
+
+.weather-detail-sync-status.error {
+  border-color: #f0d6d1;
+  color: #9a4f43;
+  background: #fff7f5;
 }
 
 .weather-detail-back,
@@ -177,6 +228,13 @@ watch(() => route.params.cityId, loadCity)
 .weather-detail-icon {
   display: block;
   font-size: 40px;
+}
+
+.weather-detail-icon-image {
+  width: 68px;
+  height: 68px;
+  display: block;
+  object-fit: contain;
 }
 
 .weather-detail-label {
@@ -312,6 +370,13 @@ watch(() => route.params.cityId, loadCity)
 .weather-detail-forecast-item strong {
   grid-row: span 2;
   font-size: 23px;
+}
+
+.weather-detail-forecast-item img {
+  width: 38px;
+  height: 38px;
+  grid-row: span 2;
+  object-fit: contain;
 }
 
 .weather-detail-forecast-item b {

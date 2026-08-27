@@ -74,16 +74,16 @@ const navGroups = [
         title: 'Weather 프로젝트',
         items: [
           {
+            label: 'Weather Final Dashboard',
+            meta: 'Mockup → API · 최종 통합',
+            to: '/hands-on/weather',
+            routeNames: ['hands-on-weather'],
+          },
+          {
             label: 'Weather Components',
             meta: 'Props · Emits · Slot',
             to: '/components/weather',
             routeNames: ['components-weather'],
-          },
-          {
-            label: 'Weather Dashboard',
-            meta: '검색 · 즐겨찾기 · 예보',
-            to: '/hands-on/weather',
-            routeNames: ['hands-on-weather'],
           },
           {
             label: 'Weather Router',

@@ -6,7 +6,11 @@ import WeatherParent from '@/components/practices/hands-on/WeatherParent.vue'
 const router = useRouter()
 
 function openDetail(city) {
-  router.push({ name: 'weather-detail', params: { cityId: city.id } })
+  router.push({
+    name: 'weather-detail',
+    params: { cityId: city.id },
+    query: { q: city.apiQuery ?? city.name },
+  })
 }
 </script>
 

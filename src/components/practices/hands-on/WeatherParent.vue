@@ -1,9 +1,13 @@
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch, watchEffect } from 'vue'
+import { ElMessage } from 'element-plus'
+import { storeToRefs } from 'pinia'
 import BaseDashboardCard from './BaseDashboardCard.vue'
 import SearchBar from './SearchBar.vue'
 import WeatherCard from './WeatherCard.vue'
+import UnitToggler from '@/components/practices/pinia/UnitToggler.vue'
 import { useConfigStore } from '@/stores/configStore.js'
+import { useWeatherStore } from '@/stores/weatherStore.js'
 import { toDisplayTemperature } from '@/utils/temperature.js'
 
 const props = defineProps({
@@ -15,12 +19,13 @@ const props = defineProps({
 
 const emit = defineEmits(['click-detail'])
 const configStore = useConfigStore()
+const weatherStore = useWeatherStore()
 
 function displayTemperature(value) {
   return toDisplayTemperature(value, configStore.unit)
 }
 
-const weatherList = ref([
+const weatherSeed = [
   {
     id: 'city_01',
     name: '서울',
@@ -277,16 +282,28 @@ const weatherList = ref([
       { day: '21:00', temp: 21, icon: '☁️', status: 'Cloudy', rain: 18 },
     ],
   },
-])
+]
+
+weatherStore.hydrateCities(weatherSeed)
+
+const {
+  apiKeyConfigured,
+  cities: weatherList,
+  errorMessage: apiErrorMessage,
+  favoriteCitiesCount,
+  isLoading: isRefreshing,
+  selectedCity,
+  selectedCityId,
+  sourceLabel,
+} = storeToRefs(weatherStore)
 
 const cityQuery = ref('')
-const selectedCityId = ref('city_01')
 const detailCityId = ref(null)
-const favoriteCityIds = ref(loadFavoriteCityIds())
 const showFavoritesOnly = ref(false)
 const alertDismissed = ref(false)
-const lastUpdated = ref('2 min ago')
-const isRefreshing = ref(false)
+const searchActivityMessage = ref('전체 도시를 둘러보는 중입니다.')
+const modalCloseButton = ref(null)
+let detailReturnFocus = null
 
 const filteredWeather = computed(() => {
   const query = cityQuery.value.trim().toLowerCase()
@@ -299,11 +316,7 @@ const filteredWeather = computed(() => {
   return source.filter((city) => `${city.name} ${city.region}`.toLowerCase().includes(query))
 })
 
-const selectedCity = computed(
-  () => weatherList.value.find((city) => city.id === selectedCityId.value) ?? weatherList.value[0],
-)
 const detailCity = computed(() => weatherList.value.find((city) => city.id === detailCityId.value))
-const favoriteCitiesCount = computed(() => favoriteCityIds.value.length)
 const weatherAlert = computed(() => {
   const city = selectedCity.value
   const precipitation = Number.parseInt(city.precipitation, 10)
@@ -355,31 +368,20 @@ const selectedMetrics = computed(() => [
   { label: 'Air quality', value: selectedCity.value.airQuality, icon: '≋', tone: 'sky' },
   { label: 'UV index', value: selectedCity.value.uvIndex, icon: '☼', tone: 'rose' },
 ])
+const lastUpdated = computed(() => {
+  if (!selectedCity.value.updatedAt) return 'Mock dataset'
 
-function loadFavoriteCityIds() {
-  if (typeof window === 'undefined') {
-    return ['city_01', 'city_03']
-  }
-
-  try {
-    const storedIds = JSON.parse(window.localStorage.getItem('skala-vue:weather-favorites') ?? 'null')
-    return Array.isArray(storedIds) && storedIds.length ? storedIds : ['city_01', 'city_03']
-  } catch {
-    return ['city_01', 'city_03']
-  }
-}
-
-watch(
-  favoriteCityIds,
-  (nextIds) => {
-    try {
-      window.localStorage.setItem('skala-vue:weather-favorites', JSON.stringify(nextIds))
-    } catch {
-      // localStorage가 차단된 환경에서도 화면의 즐겨찾기는 계속 동작합니다.
-    }
-  },
-  { deep: true },
-)
+  return new Date(selectedCity.value.updatedAt).toLocaleTimeString('ko-KR', {
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+})
+const apiStatusMessage = computed(() => {
+  if (apiErrorMessage.value) return apiErrorMessage.value
+  if (selectedCity.value.dataSource === 'live') return `${selectedCity.value.name} 실시간 관측값이 적용됐습니다.`
+  if (apiKeyConfigured.value) return 'API 키가 준비됐습니다. 도시를 검색하거나 새로고침해 보세요.'
+  return 'API 키가 없어 안전한 Mock 데이터로 동작 중입니다.'
+})
 
 watch(selectedCityId, (nextId, previousId) => {
   if (nextId !== previousId) {
@@ -387,8 +389,15 @@ watch(selectedCityId, (nextId, previousId) => {
   }
 })
 
+watchEffect(() => {
+  const query = cityQuery.value.trim()
+  searchActivityMessage.value = query
+    ? `“${query}” 검색 결과 ${filteredWeather.value.length}개`
+    : `전체 도시 ${weatherList.value.length}곳을 표시하고 있습니다.`
+})
+
 function selectCity(city) {
-  selectedCityId.value = city.id
+  weatherStore.selectCity(city)
 }
 
 function showDetail(city) {
@@ -399,11 +408,23 @@ function showDetail(city) {
     return
   }
 
+  detailReturnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null
   detailCityId.value = city.id
+  void nextTick(() => modalCloseButton.value?.focus())
 }
 
 function closeDetails() {
   detailCityId.value = null
+  void nextTick(() => {
+    detailReturnFocus?.focus()
+    detailReturnFocus = null
+  })
+}
+
+function handleModalKeydown(event) {
+  if (event.key === 'Escape' && detailCity.value) {
+    closeDetails()
+  }
 }
 
 function handleQueryUpdate(query) {
@@ -431,22 +452,68 @@ function dismissAlert() {
 }
 
 function isFavorite(cityId) {
-  return favoriteCityIds.value.includes(cityId)
+  return weatherStore.isFavorite(cityId)
 }
 
 function toggleFavorite(city) {
-  favoriteCityIds.value = isFavorite(city.id)
-    ? favoriteCityIds.value.filter((id) => id !== city.id)
-    : [...favoriteCityIds.value, city.id]
+  weatherStore.toggleFavorite(city)
+}
+
+async function requestLiveWeather(query, options = {}) {
+  const { notify = true, successMessage, syncQuery = true } = options
+  const result = await weatherStore.loadLiveWeather(query)
+
+  if (result.ok) {
+    if (syncQuery) {
+      cityQuery.value = result.city.name
+    }
+
+    alertDismissed.value = false
+
+    if (notify) {
+      ElMessage.success(successMessage ?? `${result.city.name} 실시간 날씨를 불러왔습니다.`)
+    }
+
+    return
+  }
+
+  if (result.reason === 'stale-request') return
+  if (!notify) return
+
+  if (result.reason === 'missing-key') {
+    ElMessage.warning(result.message)
+    return
+  }
+
+  ElMessage.error(`${result.message} 기존 데이터를 유지합니다.`)
+}
+
+function submitCitySearch() {
+  const query = cityQuery.value.trim() || selectedCity.value.apiQuery
+  return requestLiveWeather(query)
 }
 
 function refreshWeather() {
-  isRefreshing.value = true
-  lastUpdated.value = 'just now'
-  window.setTimeout(() => {
-    isRefreshing.value = false
-  }, 450)
+  return requestLiveWeather(selectedCity.value.apiQuery ?? selectedCity.value.name, {
+    successMessage: '최신 관측값으로 갱신했습니다.',
+    syncQuery: false,
+  })
 }
+
+onMounted(() => {
+  document.addEventListener('keydown', handleModalKeydown)
+
+  if (apiKeyConfigured.value) {
+    void requestLiveWeather(selectedCity.value.apiQuery ?? selectedCity.value.name, {
+      notify: false,
+      syncQuery: false,
+    })
+  }
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('keydown', handleModalKeydown)
+})
 </script>
 
 <template>
@@ -455,25 +522,37 @@ function refreshWeather() {
       <div>
         <p class="weather-dashboard-kicker">PERSONAL WEATHER DESK</p>
         <h2 id="weather-dashboard-title">Your weather, at a glance</h2>
-        <p class="weather-dashboard-subtitle">Tuesday, August 25 · Plan the rest of your day with confidence.</p>
+        <p class="weather-dashboard-subtitle">Mock에서 실시간 API까지 이어진 SKALA-VUE 최종 날씨 대시보드입니다.</p>
       </div>
-      <div class="weather-account-chip">
-        <span class="weather-account-avatar" aria-hidden="true">H</span>
-        <span><strong>Huitae Park</strong><small>Personal workspace</small></span>
+      <div class="weather-dashboard-head-actions">
+        <span class="weather-source-chip" :class="{ live: selectedCity.dataSource === 'live' }">
+          <i aria-hidden="true"></i>{{ sourceLabel }}
+        </span>
+        <UnitToggler />
       </div>
     </div>
 
     <div class="weather-dashboard-toolbar">
-      <SearchBar :query="cityQuery" @update-query="handleQueryUpdate" @clear-query="clearSearch" />
+      <SearchBar
+        :query="cityQuery"
+        :loading="isRefreshing"
+        @update-query="handleQueryUpdate"
+        @clear-query="clearSearch"
+        @submit-query="submitCitySearch"
+      />
       <div class="weather-dashboard-toolbar-meta">
-        <span><i class="weather-live-dot" aria-hidden="true"></i> Updated {{ lastUpdated }}</span>
+        <span
+          ><i class="weather-live-dot" :class="{ live: selectedCity.dataSource === 'live' }" aria-hidden="true"></i>
+          Updated {{ lastUpdated }}</span
+        >
         <button
           type="button"
           class="weather-refresh-button"
           :class="{ refreshing: isRefreshing }"
+          :disabled="isRefreshing"
           @click="refreshWeather"
         >
-          <span aria-hidden="true">↻</span> Refresh
+          <span aria-hidden="true">↻</span> {{ isRefreshing ? 'Loading' : 'Refresh' }}
         </button>
         <button
           type="button"
@@ -485,6 +564,16 @@ function refreshWeather() {
           <span aria-hidden="true">★</span> Favorites {{ favoriteCitiesCount }}
         </button>
       </div>
+    </div>
+
+    <div
+      class="weather-api-status"
+      :class="{ error: apiErrorMessage, live: selectedCity.dataSource === 'live' }"
+      role="status"
+    >
+      <strong>{{ selectedCity.dataSource === 'live' ? 'LIVE DATA' : 'DEMO DATA' }}</strong>
+      <span>{{ apiStatusMessage }}</span>
+      <small>{{ searchActivityMessage }}</small>
     </div>
 
     <div class="weather-city-chips" aria-label="빠른 도시 선택">
@@ -549,7 +638,7 @@ function refreshWeather() {
         <span class="weather-stat-icon" :class="`tone-${metric.tone}`" aria-hidden="true">{{ metric.icon }}</span>
         <div>
           <span>{{ metric.label }}</span
-          ><strong>{{ metric.value }}</strong>
+          ><strong :title="metric.value">{{ metric.value }}</strong>
         </div>
       </article>
     </div>
@@ -584,7 +673,15 @@ function refreshWeather() {
 
     <div v-if="detailCity" class="weather-modal-layer" role="presentation" @click.self="closeDetails">
       <section class="weather-detail-modal" role="dialog" aria-modal="true" aria-labelledby="weather-detail-title">
-        <button type="button" class="weather-modal-close" aria-label="상세 패널 닫기" @click="closeDetails">×</button>
+        <button
+          ref="modalCloseButton"
+          type="button"
+          class="weather-modal-close"
+          aria-label="상세 패널 닫기"
+          @click="closeDetails"
+        >
+          ×
+        </button>
         <span class="weather-modal-icon" aria-hidden="true">{{ detailCity.icon }}</span>
         <p class="weather-card-label">CITY DETAIL</p>
         <h3 id="weather-detail-title">{{ detailCity.name }} weather profile</h3>
@@ -656,6 +753,7 @@ function refreshWeather() {
 .weather-dashboard-head,
 .weather-dashboard-toolbar,
 .weather-city-chips,
+.weather-api-status,
 .weather-alert-card,
 .weather-dashboard-grid,
 .weather-stat-grid,
@@ -691,6 +789,46 @@ function refreshWeather() {
   margin: 8px 0 0;
   color: var(--weather-muted);
   font-size: 13px;
+}
+
+.weather-dashboard-head-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.weather-source-chip {
+  min-height: 33px;
+  padding: 7px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid #e5dfcd;
+  border-radius: 9px;
+  color: #7b6840;
+  background: #fffaf0;
+  font-size: 10px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.weather-source-chip i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #d5a849;
+}
+
+.weather-source-chip.live {
+  border-color: #cfe8dc;
+  color: #287550;
+  background: #f1fbf6;
+}
+
+.weather-source-chip.live i {
+  background: #42b883;
 }
 
 .weather-account-chip {
@@ -748,18 +886,64 @@ function refreshWeather() {
   font-size: 11px;
 }
 
+.weather-api-status {
+  margin-top: 14px;
+  padding: 10px 12px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #e4e6ef;
+  border-radius: 11px;
+  color: #71798f;
+  background: #fff;
+  font-size: 11px;
+}
+
+.weather-api-status strong {
+  color: #8c7345;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+}
+
+.weather-api-status small {
+  color: #9aa0b1;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.weather-api-status.live {
+  border-color: #d5eadf;
+  background: #f6fcf9;
+}
+
+.weather-api-status.live strong {
+  color: #287550;
+}
+
+.weather-api-status.error {
+  border-color: #f0d6d1;
+  color: #9a4f43;
+  background: #fff7f5;
+}
+
 .weather-live-dot {
   width: 7px;
   height: 7px;
   margin-right: 4px;
   display: inline-block;
   border-radius: 50%;
+  background: #d5a849;
+  box-shadow: 0 0 0 3px rgba(213, 168, 73, 0.15);
+}
+
+.weather-live-dot.live {
   background: #56bf8a;
   box-shadow: 0 0 0 3px rgba(86, 191, 138, 0.15);
 }
 
 .weather-refresh-button {
-  min-height: 32px;
+  min-height: 40px;
   padding: 6px 10px;
   border: 1px solid var(--weather-line);
   border-radius: 8px;
@@ -791,7 +975,7 @@ function refreshWeather() {
 }
 
 .weather-filter-toggle {
-  min-height: 32px;
+  min-height: 40px;
   padding: 6px 10px;
   border: 1px solid var(--weather-line);
   border-radius: 8px;
@@ -832,7 +1016,7 @@ function refreshWeather() {
 }
 
 .weather-city-chip {
-  min-height: 31px;
+  min-height: 36px;
   padding: 5px 11px;
   flex: 0 0 auto;
   border: 1px solid var(--weather-line);
@@ -936,8 +1120,8 @@ function refreshWeather() {
 }
 
 .weather-alert-dismiss {
-  width: 24px;
-  height: 24px;
+  width: 36px;
+  height: 36px;
   border: 0;
   border-radius: 7px;
   color: #8b9b9a;
@@ -1223,6 +1407,19 @@ function refreshWeather() {
   .weather-dashboard-toolbar {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .weather-dashboard-head-actions {
+    justify-content: flex-start;
+  }
+
+  .weather-api-status {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .weather-api-status small {
+    grid-column: 1 / -1;
+    white-space: normal;
   }
 
   .weather-account-chip {

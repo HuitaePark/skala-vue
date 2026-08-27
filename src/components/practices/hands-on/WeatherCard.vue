@@ -63,7 +63,13 @@ function toggleFavorite(event) {
     </div>
 
     <div class="weather-current-reading">
-      <span class="weather-current-icon" aria-hidden="true">{{ props.city.icon }}</span>
+      <img
+        v-if="props.city.iconUrl"
+        class="weather-current-icon-image"
+        :src="props.city.iconUrl"
+        :alt="props.city.status"
+      />
+      <span v-else class="weather-current-icon" aria-hidden="true">{{ props.city.icon }}</span>
       <div>
         <strong
           >{{ displayTemperature(props.city.temp) }}<sup>{{ configStore.unitSymbol }}</sup></strong
@@ -86,35 +92,41 @@ function toggleFavorite(event) {
       >
     </div>
 
-    <div class="weather-hourly-heading"><span>Next 6 hours</span><small>Local time</small></div>
+    <div class="weather-hourly-heading"><span>Next 6 periods</span><small>3-hour forecast</small></div>
     <div class="weather-hourly-list">
       <div v-for="hour in props.city.forecast" :key="`${props.city.id}-${hour.day}`" class="weather-hourly-item">
         <span>{{ hour.day }}</span>
-        <span class="weather-hourly-icon" aria-hidden="true">{{ hour.icon }}</span>
+        <img v-if="hour.iconUrl" class="weather-hourly-icon-image" :src="hour.iconUrl" :alt="hour.status" />
+        <span v-else class="weather-hourly-icon" aria-hidden="true">{{ hour.icon }}</span>
         <strong>{{ displayTemperature(hour.temp) }}{{ configStore.unitSymbol }}</strong>
         <small>{{ hour.rain }}% rain</small>
       </div>
     </div>
   </article>
 
-  <article
-    v-else
-    class="weather-location-row"
-    :class="{ selected: props.selected }"
-    tabindex="0"
-    @click="selectCard"
-    @keydown.enter="selectCard"
-    @keydown.space.prevent="selectCard"
-  >
-    <span class="weather-location-icon" aria-hidden="true">{{ props.city.icon }}</span>
-    <div class="weather-location-name">
-      <strong>{{ props.city.name }}</strong
-      ><span
-        >{{ props.city.status }} · {{ displayTemperature(props.city.low) }}{{ configStore.unitSymbol }} /
-        {{ displayTemperature(props.city.high) }}{{ configStore.unitSymbol }}</span
+  <article v-else class="weather-location-row" :class="{ selected: props.selected }">
+    <button
+      type="button"
+      class="weather-location-select"
+      :aria-pressed="props.selected"
+      :aria-label="`${props.city.name} 날씨 선택`"
+      @click="selectCard"
+    >
+      <span class="weather-location-icon">
+        <img v-if="props.city.iconUrl" :src="props.city.iconUrl" :alt="props.city.status" />
+        <span v-else aria-hidden="true">{{ props.city.icon }}</span>
+      </span>
+      <span class="weather-location-name">
+        <strong>{{ props.city.name }}</strong
+        ><span
+          >{{ props.city.status }} · {{ displayTemperature(props.city.low) }}{{ configStore.unitSymbol }} /
+          {{ displayTemperature(props.city.high) }}{{ configStore.unitSymbol }}</span
+        >
+      </span>
+      <strong class="weather-location-temp"
+        >{{ displayTemperature(props.city.temp) }}{{ configStore.unitSymbol }}</strong
       >
-    </div>
-    <strong class="weather-location-temp">{{ displayTemperature(props.city.temp) }}{{ configStore.unitSymbol }}</strong>
+    </button>
     <button
       type="button"
       class="weather-location-favorite"
@@ -124,7 +136,7 @@ function toggleFavorite(event) {
     >
       {{ props.favorite ? '★' : '☆' }}
     </button>
-    <button type="button" class="weather-location-action" @click.stop="showDetail">View</button>
+    <button type="button" class="weather-location-action" @click="showDetail">View</button>
   </article>
 </template>
 
@@ -180,8 +192,8 @@ function toggleFavorite(event) {
 }
 
 .weather-favorite-button {
-  width: 34px;
-  height: 34px;
+  width: 40px;
+  height: 40px;
   border: 1px solid rgba(255, 255, 255, 0.24);
   border-radius: 10px;
   color: rgba(255, 255, 255, 0.72);
@@ -206,6 +218,13 @@ function toggleFavorite(event) {
 .weather-current-icon {
   font-size: 51px;
   line-height: 1;
+  filter: drop-shadow(0 7px 9px rgba(24, 28, 90, 0.2));
+}
+
+.weather-current-icon-image {
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
   filter: drop-shadow(0 7px 9px rgba(24, 28, 90, 0.2));
 }
 
@@ -309,6 +328,12 @@ function toggleFavorite(event) {
 .weather-hourly-icon {
   font-size: 17px;
 }
+
+.weather-hourly-icon-image {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
 .weather-hourly-item strong {
   color: #fff;
   font-size: 12px;
@@ -327,24 +352,39 @@ function toggleFavorite(event) {
 
 .weather-location-row {
   min-width: 0;
-  padding: 10px 9px;
+  padding: 5px;
   display: grid;
-  grid-template-columns: 30px minmax(0, 1fr) auto 21px 35px;
+  grid-template-columns: minmax(0, 1fr) 38px 44px;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
   border: 1px solid transparent;
   border-radius: 11px;
-  cursor: pointer;
   transition:
     border-color 160ms ease,
     background-color 160ms ease;
 }
 
 .weather-location-row:hover,
-.weather-location-row:focus-visible,
+.weather-location-row:focus-within,
 .weather-location-row.selected {
   border-color: #e0e2fb;
   background: #f6f6ff;
+}
+
+.weather-location-select {
+  min-width: 0;
+  min-height: 44px;
+  padding: 5px 4px;
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 8px;
+  color: inherit;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
 }
 
 .weather-location-icon {
@@ -355,6 +395,12 @@ function toggleFavorite(event) {
   border-radius: 9px;
   background: #f4f5fb;
   font-size: 17px;
+}
+
+.weather-location-icon img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
 }
 
 .weather-location-name {
@@ -382,11 +428,14 @@ function toggleFavorite(event) {
 }
 
 .weather-location-favorite {
+  width: 44px;
+  min-height: 44px;
   padding: 0;
   border: 0;
+  border-radius: 8px;
   color: #b8bdcd;
   background: transparent;
-  font-size: 15px;
+  font-size: 17px;
   cursor: pointer;
 }
 
@@ -395,8 +444,8 @@ function toggleFavorite(event) {
 }
 
 .weather-location-action {
-  min-height: 24px;
-  padding: 3px 6px;
+  min-height: 44px;
+  padding: 6px 8px;
   border: 0;
   border-radius: 6px;
   color: #6268d9;
@@ -416,6 +465,10 @@ function toggleFavorite(event) {
   .weather-current-icon {
     font-size: 42px;
   }
+  .weather-current-icon-image {
+    width: 58px;
+    height: 58px;
+  }
   .weather-hourly-list {
     gap: 3px;
   }
@@ -423,11 +476,7 @@ function toggleFavorite(event) {
     padding-inline: 2px;
   }
   .weather-location-row {
-    grid-template-columns: 30px minmax(0, 1fr) auto 20px;
-  }
-  .weather-location-action {
-    grid-column: 2 / -1;
-    justify-self: start;
+    grid-template-columns: minmax(0, 1fr) 44px 44px;
   }
 }
 </style>
